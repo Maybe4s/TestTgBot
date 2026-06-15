@@ -16,41 +16,59 @@ const REAL_AUDITS = {
       { label: "Доверие", score: 44 }
     ],
     findings: [
-      { id:"no-prices", category:"Контент", severity:"urgent",
-        title:"В каталоге нет цен — оптовик не может оценить маржинальность",
-        summary:"Firecrawl проверил страницы /catalog/pryamye_divany, /catalog/uglovye_divany, /catalog/krovati — во всех позициях цена показана как «р.» без суммы. Партнёр вынужден звонить, чтобы узнать базовую стоимость.",
-        impact:"B2B клиент сравнивает 3–5 поставщиков. Тот, у кого прайс на сайте, выигрывает звонок первым.",
-        recommendedAction:"Добавить ориентировочные цены «от X руб.» или форму «Запросить прайс» с доставкой PDF за 1 клик.",
+      { id:"no-prices", category:"Контент", severity:"urgent", num:1,
+        title:"В каталоге нет цен",
+        loss:"Оптовик не может за 30 секунд понять, выгодно ли работать с вами. Открывает конкурента, у которого прайс виден сразу.",
+        summary:"Firecrawl проверил /catalog/pryamye_divany, /catalog/uglovye_divany, /catalog/krovati — у всех позиций цена «р.» без суммы. Партнёр вынужден звонить ради базовой информации.",
+        impact:"B2B клиент сравнивает 3–5 поставщиков. Тот, у кого прайс на сайте — выигрывает звонок первым.",
+        recommendedAction:"Добавить «от X руб.» к каждой позиции или форму «Запросить прайс → PDF за 5 мин».",
+        pageScreenshot:"https://storage.googleapis.com/firecrawl-scrape-media/screenshot-2048c97d-192e-4e06-a452-a3553f43499f.png?GoogleAccessId=scrape-bucket-accessor%40firecrawl.iam.gserviceaccount.com&Expires=1782140615&Signature=xNJlZifhjfydCsb06uLLzq1cXxUARED9zc5YbabhPm55URpYmSvYx6ykyTodNwYct9ePt47IFPDI%2BzCpGgwsxgD7Uaj8%2FpezLrY7%2BUO4VxAoIyTlchibWH2WIv0jQX%2BpCcGXC0l06LN8IrdGFF%2FonCmRTOHDaoPHu6K0g4wDA6BE4lAD3yHN5UsTc%2Bt3TCffe1EAk1nbzWJTlQl4XwI4gB%2B8nM7fjkEm0g7w7w1GshSHY%2Bupiyk%2FAYcxxzwK6vYzvL8RBDMsHBFWRZMKOSd378%2FV%2BN0OleCHaaGYINvOfnE0vrMIlQ%2B8ULY5a0OMpgdaIjEVlna%2BM89gDO1%2Fe%2FaLvw%3D%3D",
+        pageLabel:"Каталог: прямые диваны → цена «р.»",
         taskId:"task-prices", evidenceIds:["evidence-catalog"], pageUrls:["page-catalog-straight"], score:28 },
-      { id:"blog-placeholder", category:"Контент и SEO", severity:"urgent",
-        title:"Блог заполнен заглушками — это убивает SEO",
-        summary:"Firecrawl нашёл 3 поста в блоге с названиями «There is a first post headline», «Title of the second sample post», «The third title for the post». Это Tilda-шаблон, не заменённый реальным контентом.",
-        impact:"Яндекс индексирует страницы с бессмысленным контентом — сайт теряет позиции, доверие клиента при случайном переходе в блог тоже падает.",
-        recommendedAction:"Удалить или заменить все 3 поста реальным контентом: обзор коллекции Калипсо, гид по выбору модульного дивана, история производства.",
+      { id:"blog-placeholder", category:"Контент и SEO", severity:"urgent", num:2,
+        title:"Блог заполнен английскими заглушками",
+        loss:"Яндекс уже проиндексировал «There is a first post headline». Запросы типа «купить диван оптом» не получают этого сайта — их забирают конкуренты с реальным блогом.",
+        summary:"Firecrawl нашёл 3 поста: «There is a first post headline», «Title of the second sample post», «The third title for the post» — Tilda-шаблон, не заменённый реальным контентом.",
+        impact:"SEO-потери + потеря доверия: если клиент случайно зайдёт в блог — уйдёт сразу.",
+        recommendedAction:"Удалить 3 заглушки. Написать: обзор Калипсо, гид по выбору модульного дивана, история производства.",
+        pageScreenshot:"https://storage.googleapis.com/firecrawl-scrape-media/screenshot-331173ea-7a5d-491a-bbf4-0d8635058841.png?GoogleAccessId=scrape-bucket-accessor%40firecrawl.iam.gserviceaccount.com&Expires=1782140621&Signature=MJbjNU%2BgFvHWMIWWZ1nQ%2FDSIOr7j%2FnrsLuwBT6PpJQ1GNlRopMWlMYTYRrvV%2BInEWTViDvNUm23%2BqSvlm7R%2FHiQjxWtXV4LSQCU71VUSU4vsCvOZY28vERB8EaaQwE%2BoH3RMBWqKMKXnMHKHqIg6AqTdW%2FFvN7y5wl2YTwwEbfJLt1C%2FI7M1jqEbRtSxb83%2Fj2VbDckNhAkGWK%2FPA7%2BFxnS6mGo3Q2if28ofPdrICMlqCvk8Ayy4OLiFe%2BjiXan4CIrJ3MdfuTIeBurcCuKts9ztyylzNT2ts8UtdWrHqWbNKkPlC2Wqwwa2tQWNUGv59oz1A18wrU6uH09MhC7Q%3D%3D",
+        pageLabel:"Блог: «There is a first post headline»",
         taskId:"task-blog", evidenceIds:["evidence-blog"], pageUrls:["page-blog"], score:18 },
-      { id:"no-geo", category:"GEO и карты", severity:"urgent",
-        title:"На сайте нет города и адреса — не понятно, откуда производство",
-        summary:"Весь сайт говорит «крупный производитель» и «партнёры по РФ и СНГ», но ни на главной, ни в разделе «О производстве» нет города, адреса или региона. Яндекс.Карты и 2ГИС не упоминаются.",
-        impact:"Оптовик хочет понять логистику и стоимость доставки. Без географии — звонит конкурентам, которые это указали.",
-        recommendedAction:"Добавить на главную и в футер: город производства, адрес склада/шоурума (или зоны самовывоза). Зарегистрировать карточку в Яндекс.Картах с фото цеха.",
+      { id:"no-geo", category:"GEO и карты", severity:"urgent", num:3,
+        title:"Непонятно, где находится производство",
+        loss:"Оптовик хочет знать, сколько стоит доставка до его склада. Без города — считает это риском и звонит тем, у кого адрес открыт.",
+        summary:"«Крупный производитель по РФ и СНГ» — но ни города, ни адреса, ни региона нет нигде на сайте. Яндекс.Карты и 2ГИС не упоминаются.",
+        impact:"В локальном и региональном поиске сайт невидим. Партнёр из Москвы не может оценить логистику.",
+        recommendedAction:"Добавить город + адрес в шапку и футер. Зарегистрировать в Яндекс.Бизнес с фото цеха.",
+        pageScreenshot:"https://storage.googleapis.com/firecrawl-scrape-media/screenshot-8c745684-2acb-43e2-98ea-2e4c95ceab27.png?GoogleAccessId=scrape-bucket-accessor%40firecrawl.iam.gserviceaccount.com&Expires=1782140590&Signature=fRQ99I7QIKU1IhZA8lOrABh%2BtPZOJ5HirAIk65CdL%2BzOgSHRIGdkFRUSZRQ7HEqcB%2FJ406QMywyCrHpaJZoIx8WQnmn%2FCbsmkbxRou%2Fa%2FzewsMzF9oVkdVSyMJCdPRtbgRNDrZpksLT0QeHOJXCyQItzGps0IJjm8DX3q52q%2FA149W27c1iwuKz5XxRMoHZ0dd9l1V5bo0WUWD8PLxaESnzFaD%2BtRWEOAsQ4%2BBxpm7qvZ8Ehp2rWxuJ7nKNN6ekaWigcwyPoAKHKM3qw0pJpz7Xg%2BnHEaYvkMCwkCvOh1PDGmJpoFVYz7xYq18hnwOmNQ6DdhHSB4MOU0gbui56UJQ%3D%3D",
+        pageLabel:"Главная — город и адрес не найдены",
         taskId:"task-geo", evidenceIds:["evidence-home"], pageUrls:["page-home"], score:22 },
-      { id:"no-social", category:"Соцсети", severity:"urgent",
-        title:"Нет ни одного канала в соцсетях — нулевое присутствие",
-        summary:"Firecrawl не нашёл ссылок на Telegram, ВКонтакте, WhatsApp, Instagram. На главной нет иконок соцсетей. Три партнёра указаны ссылками (woodmann-mebel.ru и др.), но собственных каналов нет.",
-        impact:"B2B клиент проверяет поставщика в соцсетях: смотрит фото цеха, новинки, отзывы в комментариях. Пустота = недоверие.",
-        recommendedAction:"Создать Telegram-канал «SOFT Divan — производство мебели» с контентом: новинки, видео цеха, условия партнёрства, бэкстейдж производства.",
+      { id:"no-social", category:"Соцсети", severity:"urgent", num:4,
+        title:"Нет ни одного канала в соцсетях",
+        loss:"B2B клиент проверяет поставщика в Telegram или ВК: смотрит фото цеха, читает отзывы в комментариях. Видит пустоту — уходит к тому, у кого канал живой.",
+        summary:"Firecrawl не нашёл ни одной ссылки на Telegram, ВКонтакте, WhatsApp, Instagram. Иконок соцсетей на сайте нет вообще.",
+        impact:"Компания с 120 партнёрами выглядит как призрак в интернете за пределами своего сайта.",
+        recommendedAction:"Создать Telegram-канал @softdivan_mebel. 5 постов на первую неделю: цех, новинки, условия, бэкстейдж, кейс партнёра.",
+        pageScreenshot:"https://storage.googleapis.com/firecrawl-scrape-media/screenshot-8c745684-2acb-43e2-98ea-2e4c95ceab27.png?GoogleAccessId=scrape-bucket-accessor%40firecrawl.iam.gserviceaccount.com&Expires=1782140590&Signature=fRQ99I7QIKU1IhZA8lOrABh%2BtPZOJ5HirAIk65CdL%2BzOgSHRIGdkFRUSZRQ7HEqcB%2FJ406QMywyCrHpaJZoIx8WQnmn%2FCbsmkbxRou%2Fa%2FzewsMzF9oVkdVSyMJCdPRtbgRNDrZpksLT0QeHOJXCyQItzGps0IJjm8DX3q52q%2FA149W27c1iwuKz5XxRMoHZ0dd9l1V5bo0WUWD8PLxaESnzFaD%2BtRWEOAsQ4%2BBxpm7qvZ8Ehp2rWxuJ7nKNN6ekaWigcwyPoAKHKM3qw0pJpz7Xg%2BnHEaYvkMCwkCvOh1PDGmJpoFVYz7xYq18hnwOmNQ6DdhHSB4MOU0gbui56UJQ%3D%3D",
+        pageLabel:"Главная — ноль иконок соцсетей",
         taskId:"task-social", evidenceIds:[], pageUrls:["page-home"], score:10 },
-      { id:"single-cta", category:"Конверсия", severity:"important",
-        title:"Все CTA-кнопки ведут на один якорь #rec1157278931",
-        summary:"«Подробнее», «Стать партнёром», «Узнать цены» — все 6+ кнопок на главной ведут на один якорь формы. Нет сегментации по намерению: кто хочет каталог, кто хочет цены, кто хочет образцы.",
-        impact:"Потеря тех, кто не готов сразу к заявке — им нужен другой шаг (скачать каталог, посмотреть прайс, написать в мессенджер).",
-        recommendedAction:"Разделить CTA: «Скачать каталог» → PDF, «Узнать цены» → форма с быстрым ответом, «Стать партнёром» → страница условий.",
+      { id:"single-cta", category:"Конверсия", severity:"important", num:5,
+        title:"Все кнопки ведут на одну и ту же форму",
+        loss:"Посетитель, которому нужен каталог, нажимает «Подробнее» и видит форму заявки. Не готов — закрывает вкладку. Потенциальный партнёр потерян.",
+        summary:"«Подробнее», «Стать партнёром», «Узнать цены» — все 6+ кнопок на главной ведут на один якорь #rec1157278931.",
+        impact:"Нет промежуточных шагов для «тёплого» клиента, которому нужен PDF или консультация, а не сразу сделка.",
+        recommendedAction:"Разделить CTA: «Скачать каталог» → PDF, «Узнать оптовые цены» → быстрая форма, «Стать партнёром» → страница условий.",
+        pageScreenshot:"https://storage.googleapis.com/firecrawl-scrape-media/screenshot-8c745684-2acb-43e2-98ea-2e4c95ceab27.png?GoogleAccessId=scrape-bucket-accessor%40firecrawl.iam.gserviceaccount.com&Expires=1782140590&Signature=fRQ99I7QIKU1IhZA8lOrABh%2BtPZOJ5HirAIk65CdL%2BzOgSHRIGdkFRUSZRQ7HEqcB%2FJ406QMywyCrHpaJZoIx8WQnmn%2FCbsmkbxRou%2Fa%2FzewsMzF9oVkdVSyMJCdPRtbgRNDrZpksLT0QeHOJXCyQItzGps0IJjm8DX3q52q%2FA149W27c1iwuKz5XxRMoHZ0dd9l1V5bo0WUWD8PLxaESnzFaD%2BtRWEOAsQ4%2BBxpm7qvZ8Ehp2rWxuJ7nKNN6ekaWigcwyPoAKHKM3qw0pJpz7Xg%2BnHEaYvkMCwkCvOh1PDGmJpoFVYz7xYq18hnwOmNQ6DdhHSB4MOU0gbui56UJQ%3D%3D",
+        pageLabel:"Главная — все кнопки → один якорь",
         taskId:"task-cta", evidenceIds:["evidence-home"], pageUrls:["page-home"], score:52 },
-      { id:"no-reviews", category:"Доверие", severity:"important",
-        title:"Партнёры указаны только лого — нет цитат и кейсов",
-        summary:"На сайте есть раздел «Наша мебель в проектах» и логотипы 3 партнёров (woodmann-mebel.ru, мебель Пензы, kst58.ru), но нет ни одной цитаты, ни имени контактного лица, ни описания проекта.",
-        impact:"120 партнёров — мощный аргумент. Но без живых отзывов это просто цифра. Конкурент с 10 партнёрами, но с видео-отзывами, выглядит надёжнее.",
-        recommendedAction:"Попросить 3–5 партнёров дать короткую цитату (2–3 предложения) + фото салона с диванами SOFT. Разместить как карусель на главной.",
+      { id:"no-reviews", category:"Доверие", severity:"important", num:6,
+        title:"120 партнёров — но нет ни одного живого отзыва",
+        loss:"Новый оптовик видит лого woodmann-mebel.ru, но не знает, что именно они сказали бы про работу с SOFT Divan. Конкурент с 10 партнёрами, но с видео-отзывами — убедительнее.",
+        summary:"На сайте есть 3 лого партнёров, но нет цитат, имён, описаний. Нет ни одного «нам понравилось, что...».",
+        impact:"Социальное доказательство в B2B — главный фактор доверия. Без него 120 партнёров — просто цифра.",
+        recommendedAction:"Попросить 3–5 партнёров дать 2–3 предложения + фото салона. Разместить как карусель на главной.",
+        pageScreenshot:"https://storage.googleapis.com/firecrawl-scrape-media/screenshot-8c745684-2acb-43e2-98ea-2e4c95ceab27.png?GoogleAccessId=scrape-bucket-accessor%40firecrawl.iam.gserviceaccount.com&Expires=1782140590&Signature=fRQ99I7QIKU1IhZA8lOrABh%2BtPZOJ5HirAIk65CdL%2BzOgSHRIGdkFRUSZRQ7HEqcB%2FJ406QMywyCrHpaJZoIx8WQnmn%2FCbsmkbxRou%2Fa%2FzewsMzF9oVkdVSyMJCdPRtbgRNDrZpksLT0QeHOJXCyQItzGps0IJjm8DX3q52q%2FA149W27c1iwuKz5XxRMoHZ0dd9l1V5bo0WUWD8PLxaESnzFaD%2BtRWEOAsQ4%2BBxpm7qvZ8Ehp2rWxuJ7nKNN6ekaWigcwyPoAKHKM3qw0pJpz7Xg%2BnHEaYvkMCwkCvOh1PDGmJpoFVYz7xYq18hnwOmNQ6DdhHSB4MOU0gbui56UJQ%3D%3D",
+        pageLabel:"Главная — 3 лого без цитат",
         taskId:"task-reviews", evidenceIds:["evidence-home"], pageUrls:["page-home"], score:40 }
     ],
     tasks: [
@@ -80,16 +98,16 @@ const REAL_AUDITS = {
         linkedFindingIds:["no-reviews"], linkedEvidenceIds:[] }
     ],
     pages: [
-      { id:"page-home", type:"home", title:"Главная — SOFT Divan", url:"https://soft-divan.ru", description:"Производитель мягкой мебели B2B, коллекция Калипсо, форма партнёрства", statusCode:200, screenshot:"", signals:{ hasCta:true, hasPhone:false, imageCount:8, linkCount:18 }, excerpt:"Крупный производитель для вашего мебельного бизнеса. 120+ партнёров, 2500+ изделий, срок производства 7 дней." },
-      { id:"page-catalog-straight", type:"catalog", title:"Прямые диваны — каталог", url:"https://soft-divan.ru/catalog/pryamye_divany", description:"Диваны Калипсо 2х/3х-модульный, Берг, Мини — прямые модели", statusCode:200, screenshot:"", signals:{ hasCta:false, hasPhone:false, imageCount:12, linkCount:10 }, excerpt:"Кресло «Калипсо», Диван «Калипсо» 2х/3х-модульный. Размеры указаны, цены скрыты." },
-      { id:"page-catalog-angular", type:"catalog", title:"Угловые диваны — каталог", url:"https://soft-divan.ru/catalog/uglovye_divany", description:"Спейс, Прага, Грейс, Чикаго — угловые модели", statusCode:200, screenshot:"", signals:{ hasCta:false, hasPhone:false, imageCount:10, linkCount:8 }, excerpt:"Диван «Спейс» (Хит) 2700×1480, Прага, Грейс. Нет цен, нет сортировки." },
+      { id:"page-home", type:"home", title:"Главная — SOFT Divan", url:"https://soft-divan.ru", description:"Производитель мягкой мебели B2B, коллекция Калипсо, форма партнёрства", statusCode:200, screenshot:"https://storage.googleapis.com/firecrawl-scrape-media/screenshot-8c745684-2acb-43e2-98ea-2e4c95ceab27.png?GoogleAccessId=scrape-bucket-accessor%40firecrawl.iam.gserviceaccount.com&Expires=1782140590&Signature=fRQ99I7QIKU1IhZA8lOrABh%2BtPZOJ5HirAIk65CdL%2BzOgSHRIGdkFRUSZRQ7HEqcB%2FJ406QMywyCrHpaJZoIx8WQnmn%2FCbsmkbxRou%2Fa%2FzewsMzF9oVkdVSyMJCdPRtbgRNDrZpksLT0QeHOJXCyQItzGps0IJjm8DX3q52q%2FA149W27c1iwuKz5XxRMoHZ0dd9l1V5bo0WUWD8PLxaESnzFaD%2BtRWEOAsQ4%2BBxpm7qvZ8Ehp2rWxuJ7nKNN6ekaWigcwyPoAKHKM3qw0pJpz7Xg%2BnHEaYvkMCwkCvOh1PDGmJpoFVYz7xYq18hnwOmNQ6DdhHSB4MOU0gbui56UJQ%3D%3D", signals:{ hasCta:true, hasPhone:false, imageCount:8, linkCount:18 }, excerpt:"Крупный производитель для вашего мебельного бизнеса. 120+ партнёров, 2500+ изделий, срок производства 7 дней." },
+      { id:"page-catalog-straight", type:"catalog", title:"Прямые диваны — каталог", url:"https://soft-divan.ru/catalog/pryamye_divany", description:"Диваны Калипсо 2х/3х-модульный, Берг, Мини — прямые модели", statusCode:200, screenshot:"https://storage.googleapis.com/firecrawl-scrape-media/screenshot-2048c97d-192e-4e06-a452-a3553f43499f.png?GoogleAccessId=scrape-bucket-accessor%40firecrawl.iam.gserviceaccount.com&Expires=1782140615&Signature=xNJlZifhjfydCsb06uLLzq1cXxUARED9zc5YbabhPm55URpYmSvYx6ykyTodNwYct9ePt47IFPDI%2BzCpGgwsxgD7Uaj8%2FpezLrY7%2BUO4VxAoIyTlchibWH2WIv0jQX%2BpCcGXC0l06LN8IrdGFF%2FonCmRTOHDaoPHu6K0g4wDA6BE4lAD3yHN5UsTc%2Bt3TCffe1EAk1nbzWJTlQl4XwI4gB%2B8nM7fjkEm0g7w7w1GshSHY%2Bupiyk%2FAYcxxzwK6vYzvL8RBDMsHBFWRZMKOSd378%2FV%2BN0OleCHaaGYINvOfnE0vrMIlQ%2B8ULY5a0OMpgdaIjEVlna%2BM89gDO1%2Fe%2FaLvw%3D%3D", signals:{ hasCta:false, hasPhone:false, imageCount:12, linkCount:10 }, excerpt:"Кресло «Калипсо», Диван «Калипсо» 2х/3х-модульный. Размеры указаны, цены скрыты." },
+      { id:"page-catalog-angular", type:"catalog", title:"Угловые диваны — каталог", url:"https://soft-divan.ru/catalog/uglovye_divany", description:"Спейс, Прага, Грейс, Чикаго — угловые модели", statusCode:200, screenshot:"https://storage.googleapis.com/firecrawl-scrape-media/screenshot-7d93aeb9-4949-4b28-b3bd-6073ea7143a4.png?GoogleAccessId=scrape-bucket-accessor%40firecrawl.iam.gserviceaccount.com&Expires=1782140610&Signature=yNl%2BiYjT6is63ddbbl%2FiQg3Xvw4zm6GHmZwve1mnna1yHUKEjU1cUeO4CI7XSFz7Am4cZvkhg4ZLF6CEhmCjgD8lre1IMnLqGnhEnvZ14L7y%2F0LZucxKRZliDUf9T2P0pseJEMI93zqIeCBOG1sJ%2BnCzhF1QNhVSJ3SIe7XQv7SZOKUpP5KO50rtEkOH3e6Xp5DUZrJGOR5x8lj2F7t5QwaaqNlCr7ksIeObwatJgFGFM5PepOY%2F%2BFnb7aLqZGLoCqv1xp83g0tKWDvs9EURKjBhwE1aYAXJWYDuhIF61%2BUXfwtRjk1kXu8H8NrVm1e3tbM0lHXNmg0H%2Fdg6ojPUZw%3D%3D", signals:{ hasCta:false, hasPhone:false, imageCount:10, linkCount:8 }, excerpt:"Диван «Спейс» (Хит) 2700×1480, Прага, Грейс. Нет цен, нет сортировки." },
       { id:"page-beds", type:"catalog", title:"Мягкие кровати — каталог", url:"https://soft-divan.ru/catalog/krovati", description:"Кровати с подъёмным механизмом: Хеппи, Леона Лофт, Марлен Лофт", statusCode:200, screenshot:"", signals:{ hasCta:false, hasPhone:false, imageCount:6, linkCount:6 }, excerpt:"Кровати в стиле Лофт 1400/1600 мм. Нет цен, изображения static (не optim) — загружаются медленнее." },
-      { id:"page-blog", type:"blog", title:"Блог — SOFT Divan", url:"https://soft-divan.ru/tpost/nsoiyca9t1-there-is-a-first-post-headline", description:"3 поста-заглушки на английском языке", statusCode:200, screenshot:"", signals:{ hasCta:false, hasPhone:false, imageCount:0, linkCount:3 }, excerpt:"«There is a first post headline» — Tilda-шаблон, не заменён реальным контентом." }
+      { id:"page-blog", type:"blog", title:"Блог — SOFT Divan", url:"https://soft-divan.ru/tpost/nsoiyca9t1-there-is-a-first-post-headline", description:"3 поста-заглушки на английском языке", statusCode:200, screenshot:"https://storage.googleapis.com/firecrawl-scrape-media/screenshot-331173ea-7a5d-491a-bbf4-0d8635058841.png?GoogleAccessId=scrape-bucket-accessor%40firecrawl.iam.gserviceaccount.com&Expires=1782140621&Signature=MJbjNU%2BgFvHWMIWWZ1nQ%2FDSIOr7j%2FnrsLuwBT6PpJQ1GNlRopMWlMYTYRrvV%2BInEWTViDvNUm23%2BqSvlm7R%2FHiQjxWtXV4LSQCU71VUSU4vsCvOZY28vERB8EaaQwE%2BoH3RMBWqKMKXnMHKHqIg6AqTdW%2FFvN7y5wl2YTwwEbfJLt1C%2FI7M1jqEbRtSxb83%2Fj2VbDckNhAkGWK%2FPA7%2BFxnS6mGo3Q2if28ofPdrICMlqCvk8Ayy4OLiFe%2BjiXan4CIrJ3MdfuTIeBurcCuKts9ztyylzNT2ts8UtdWrHqWbNKkPlC2Wqwwa2tQWNUGv59oz1A18wrU6uH09MhC7Q%3D%3D", signals:{ hasCta:false, hasPhone:false, imageCount:0, linkCount:3 }, excerpt:"«There is a first post headline» — Tilda-шаблон, не заменён реальным контентом." }
     ],
     evidence: [
-      { id:"evidence-home", pageId:"page-home", pageType:"home", title:"Главная страница", url:"https://soft-divan.ru", screenshot:"", statusCode:200, imagesFound:8, excerpt:"Нет цен, нет города, нет соцсетей. CTA «Стать партнёром» — одна кнопка для всех намерений." },
-      { id:"evidence-catalog", pageId:"page-catalog-straight", pageType:"catalog", title:"Каталог прямых диванов", url:"https://soft-divan.ru/catalog/pryamye_divany", screenshot:"", statusCode:200, imagesFound:12, excerpt:"Диван «Калипсо» 2х-модульный — Прямой 1800×850 — «р.» (цена пустая). Аналогично у всех 8 позиций." },
-      { id:"evidence-blog", pageId:"page-blog", pageType:"blog", title:"Блог (заглушка)", url:"https://soft-divan.ru/tpost/nsoiyca9t1-there-is-a-first-post-headline", screenshot:"", statusCode:200, imagesFound:0, excerpt:"«There is a first post headline» — Tilda placeholder, не заменён после публикации. SEO-вред." }
+      { id:"evidence-home", pageId:"page-home", pageType:"home", title:"Главная страница", url:"https://soft-divan.ru", screenshot:"https://storage.googleapis.com/firecrawl-scrape-media/screenshot-8c745684-2acb-43e2-98ea-2e4c95ceab27.png?GoogleAccessId=scrape-bucket-accessor%40firecrawl.iam.gserviceaccount.com&Expires=1782140590&Signature=fRQ99I7QIKU1IhZA8lOrABh%2BtPZOJ5HirAIk65CdL%2BzOgSHRIGdkFRUSZRQ7HEqcB%2FJ406QMywyCrHpaJZoIx8WQnmn%2FCbsmkbxRou%2Fa%2FzewsMzF9oVkdVSyMJCdPRtbgRNDrZpksLT0QeHOJXCyQItzGps0IJjm8DX3q52q%2FA149W27c1iwuKz5XxRMoHZ0dd9l1V5bo0WUWD8PLxaESnzFaD%2BtRWEOAsQ4%2BBxpm7qvZ8Ehp2rWxuJ7nKNN6ekaWigcwyPoAKHKM3qw0pJpz7Xg%2BnHEaYvkMCwkCvOh1PDGmJpoFVYz7xYq18hnwOmNQ6DdhHSB4MOU0gbui56UJQ%3D%3D", statusCode:200, imagesFound:8, excerpt:"Нет цен, нет города, нет соцсетей. CTA «Стать партнёром» — одна кнопка для всех намерений." },
+      { id:"evidence-catalog", pageId:"page-catalog-straight", pageType:"catalog", title:"Каталог прямых диванов", url:"https://soft-divan.ru/catalog/pryamye_divany", screenshot:"https://storage.googleapis.com/firecrawl-scrape-media/screenshot-2048c97d-192e-4e06-a452-a3553f43499f.png?GoogleAccessId=scrape-bucket-accessor%40firecrawl.iam.gserviceaccount.com&Expires=1782140615&Signature=xNJlZifhjfydCsb06uLLzq1cXxUARED9zc5YbabhPm55URpYmSvYx6ykyTodNwYct9ePt47IFPDI%2BzCpGgwsxgD7Uaj8%2FpezLrY7%2BUO4VxAoIyTlchibWH2WIv0jQX%2BpCcGXC0l06LN8IrdGFF%2FonCmRTOHDaoPHu6K0g4wDA6BE4lAD3yHN5UsTc%2Bt3TCffe1EAk1nbzWJTlQl4XwI4gB%2B8nM7fjkEm0g7w7w1GshSHY%2Bupiyk%2FAYcxxzwK6vYzvL8RBDMsHBFWRZMKOSd378%2FV%2BN0OleCHaaGYINvOfnE0vrMIlQ%2B8ULY5a0OMpgdaIjEVlna%2BM89gDO1%2Fe%2FaLvw%3D%3D", statusCode:200, imagesFound:12, excerpt:"Диван «Калипсо» 2х-модульный — Прямой 1800×850 — «р.» (цена пустая). Аналогично у всех 8 позиций." },
+      { id:"evidence-blog", pageId:"page-blog", pageType:"blog", title:"Блог (заглушка)", url:"https://soft-divan.ru/tpost/nsoiyca9t1-there-is-a-first-post-headline", screenshot:"https://storage.googleapis.com/firecrawl-scrape-media/screenshot-331173ea-7a5d-491a-bbf4-0d8635058841.png?GoogleAccessId=scrape-bucket-accessor%40firecrawl.iam.gserviceaccount.com&Expires=1782140621&Signature=MJbjNU%2BgFvHWMIWWZ1nQ%2FDSIOr7j%2FnrsLuwBT6PpJQ1GNlRopMWlMYTYRrvV%2BInEWTViDvNUm23%2BqSvlm7R%2FHiQjxWtXV4LSQCU71VUSU4vsCvOZY28vERB8EaaQwE%2BoH3RMBWqKMKXnMHKHqIg6AqTdW%2FFvN7y5wl2YTwwEbfJLt1C%2FI7M1jqEbRtSxb83%2Fj2VbDckNhAkGWK%2FPA7%2BFxnS6mGo3Q2if28ofPdrICMlqCvk8Ayy4OLiFe%2BjiXan4CIrJ3MdfuTIeBurcCuKts9ztyylzNT2ts8UtdWrHqWbNKkPlC2Wqwwa2tQWNUGv59oz1A18wrU6uH09MhC7Q%3D%3D", statusCode:200, imagesFound:0, excerpt:"«There is a first post headline» — Tilda placeholder, не заменён после публикации. SEO-вред." }
     ],
     plan: [
       { period:"3–7 дней", title:"Убрать главные барьеры конверсии", taskIds:["task-prices","task-blog","task-geo"] },
@@ -242,22 +260,37 @@ function normalizeAudit(payload) {
 
 function renderFindings(findings = currentAudit.findings) {
   findings = findings || fallbackFindings;
-  auditGrid.innerHTML = findings.map((finding) => `
-    <article class="audit-card ${priorityClass(finding.severity)}" data-task-id="${finding.taskId}">
-      <div class="audit-topline">
-        <span class="module-badge">${finding.category}</span>
-        <span class="priority-badge ${priorityClass(finding.severity)}">${severityLabel(finding.severity)}</span>
+  auditGrid.innerHTML = findings.map((finding, idx) => {
+    const num = finding.num || (idx + 1);
+    const shot = finding.pageScreenshot || "";
+    const label = finding.pageLabel || "";
+    const loss = finding.loss || finding.impact || "";
+    return `
+    <article class="finding-row ${priorityClass(finding.severity)}" data-task-id="${finding.taskId}">
+      <div class="finding-num-col">
+        <span class="finding-num">${num}</span>
+        <span class="finding-sev ${priorityClass(finding.severity)}">${severityLabel(finding.severity)}</span>
       </div>
-      <h3>${finding.title}</h3>
-      <p>${finding.summary}</p>
-      <div class="audit-detail">
-        <strong>Почему влияет на заявки</strong>
-        <p>${finding.impact}</p>
-        ${expertLayerEnabled ? `<strong>Что делаем</strong><p>${finding.recommendedAction}</p>` : ""}
-        <button class="inline-action" type="button" data-task-id="${finding.taskId}">Открыть задачу</button>
+      <div class="finding-body-col">
+        <div class="finding-meta">
+          <span class="module-badge">${finding.category}</span>
+        </div>
+        <h3 class="finding-title">${finding.title}</h3>
+        <p class="finding-loss"><strong>Клиент теряет:</strong> ${loss}</p>
+        <p class="finding-summary">${finding.summary}</p>
+        ${shot ? `<div class="finding-shot-wrap">
+          <a href="${shot}" target="_blank" rel="noreferrer">
+            <img class="finding-shot" src="${shot}" alt="${label || finding.title}" loading="lazy" />
+          </a>
+          ${label ? `<span class="finding-shot-label">${label}</span>` : ""}
+        </div>` : ""}
+        <div class="finding-fix">
+          <strong>Что делаем:</strong> ${finding.recommendedAction}
+          <button class="inline-action" type="button" data-task-id="${finding.taskId}">Открыть задачу →</button>
+        </div>
       </div>
-    </article>
-  `).join("");
+    </article>`;
+  }).join("");
 }
 
 function renderPages() {
