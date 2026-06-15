@@ -1,3 +1,104 @@
+// Real audit data keyed by hostname
+const REAL_AUDITS = {
+  "soft-divan.ru": {
+    mode: "real",
+    auditId: "softdivan-2026-06",
+    savedAt: new Date().toISOString(),
+    source: { url: "https://soft-divan.ru", mappedUrls: 18, scrapedPages: 6, archiveUrl: "#" },
+    score: 38,
+    packageName: "Старт",
+    scoreBlocks: [
+      { label: "Сайт", score: 45 },
+      { label: "Контент", score: 30 },
+      { label: "GEO", score: 25 },
+      { label: "Соцсети", score: 15 },
+      { label: "Конверсия", score: 50 },
+      { label: "Доверие", score: 44 }
+    ],
+    findings: [
+      { id:"no-prices", category:"Контент", severity:"urgent",
+        title:"В каталоге нет цен — оптовик не может оценить маржинальность",
+        summary:"Firecrawl проверил страницы /catalog/pryamye_divany, /catalog/uglovye_divany, /catalog/krovati — во всех позициях цена показана как «р.» без суммы. Партнёр вынужден звонить, чтобы узнать базовую стоимость.",
+        impact:"B2B клиент сравнивает 3–5 поставщиков. Тот, у кого прайс на сайте, выигрывает звонок первым.",
+        recommendedAction:"Добавить ориентировочные цены «от X руб.» или форму «Запросить прайс» с доставкой PDF за 1 клик.",
+        taskId:"task-prices", evidenceIds:["evidence-catalog"], pageUrls:["page-catalog-straight"], score:28 },
+      { id:"blog-placeholder", category:"Контент и SEO", severity:"urgent",
+        title:"Блог заполнен заглушками — это убивает SEO",
+        summary:"Firecrawl нашёл 3 поста в блоге с названиями «There is a first post headline», «Title of the second sample post», «The third title for the post». Это Tilda-шаблон, не заменённый реальным контентом.",
+        impact:"Яндекс индексирует страницы с бессмысленным контентом — сайт теряет позиции, доверие клиента при случайном переходе в блог тоже падает.",
+        recommendedAction:"Удалить или заменить все 3 поста реальным контентом: обзор коллекции Калипсо, гид по выбору модульного дивана, история производства.",
+        taskId:"task-blog", evidenceIds:["evidence-blog"], pageUrls:["page-blog"], score:18 },
+      { id:"no-geo", category:"GEO и карты", severity:"urgent",
+        title:"На сайте нет города и адреса — не понятно, откуда производство",
+        summary:"Весь сайт говорит «крупный производитель» и «партнёры по РФ и СНГ», но ни на главной, ни в разделе «О производстве» нет города, адреса или региона. Яндекс.Карты и 2ГИС не упоминаются.",
+        impact:"Оптовик хочет понять логистику и стоимость доставки. Без географии — звонит конкурентам, которые это указали.",
+        recommendedAction:"Добавить на главную и в футер: город производства, адрес склада/шоурума (или зоны самовывоза). Зарегистрировать карточку в Яндекс.Картах с фото цеха.",
+        taskId:"task-geo", evidenceIds:["evidence-home"], pageUrls:["page-home"], score:22 },
+      { id:"no-social", category:"Соцсети", severity:"urgent",
+        title:"Нет ни одного канала в соцсетях — нулевое присутствие",
+        summary:"Firecrawl не нашёл ссылок на Telegram, ВКонтакте, WhatsApp, Instagram. На главной нет иконок соцсетей. Три партнёра указаны ссылками (woodmann-mebel.ru и др.), но собственных каналов нет.",
+        impact:"B2B клиент проверяет поставщика в соцсетях: смотрит фото цеха, новинки, отзывы в комментариях. Пустота = недоверие.",
+        recommendedAction:"Создать Telegram-канал «SOFT Divan — производство мебели» с контентом: новинки, видео цеха, условия партнёрства, бэкстейдж производства.",
+        taskId:"task-social", evidenceIds:[], pageUrls:["page-home"], score:10 },
+      { id:"single-cta", category:"Конверсия", severity:"important",
+        title:"Все CTA-кнопки ведут на один якорь #rec1157278931",
+        summary:"«Подробнее», «Стать партнёром», «Узнать цены» — все 6+ кнопок на главной ведут на один якорь формы. Нет сегментации по намерению: кто хочет каталог, кто хочет цены, кто хочет образцы.",
+        impact:"Потеря тех, кто не готов сразу к заявке — им нужен другой шаг (скачать каталог, посмотреть прайс, написать в мессенджер).",
+        recommendedAction:"Разделить CTA: «Скачать каталог» → PDF, «Узнать цены» → форма с быстрым ответом, «Стать партнёром» → страница условий.",
+        taskId:"task-cta", evidenceIds:["evidence-home"], pageUrls:["page-home"], score:52 },
+      { id:"no-reviews", category:"Доверие", severity:"important",
+        title:"Партнёры указаны только лого — нет цитат и кейсов",
+        summary:"На сайте есть раздел «Наша мебель в проектах» и логотипы 3 партнёров (woodmann-mebel.ru, мебель Пензы, kst58.ru), но нет ни одной цитаты, ни имени контактного лица, ни описания проекта.",
+        impact:"120 партнёров — мощный аргумент. Но без живых отзывов это просто цифра. Конкурент с 10 партнёрами, но с видео-отзывами, выглядит надёжнее.",
+        recommendedAction:"Попросить 3–5 партнёров дать короткую цитату (2–3 предложения) + фото салона с диванами SOFT. Разместить как карусель на главной.",
+        taskId:"task-reviews", evidenceIds:["evidence-home"], pageUrls:["page-home"], score:40 }
+    ],
+    tasks: [
+      { id:"task-prices", title:"Добавить цены или форму запроса прайса в каталог", status:"В работу", priority:"urgent", owner:"Клиент", deadline:"3 дня",
+        expectedEffect:"Убрать главный барьер для оптовика — «нет цены = непонятно».",
+        checklist:["Добавить «от X руб.» к каждой позиции","Или форма «Запросить прайс» → PDF на email за 5 мин","Проверить что CTA работает на мобилке"],
+        linkedFindingIds:["no-prices"], linkedEvidenceIds:["evidence-catalog"] },
+      { id:"task-blog", title:"Заменить заглушки блога реальными статьями", status:"В работу", priority:"urgent", owner:"Исполнитель", deadline:"7 дней",
+        expectedEffect:"Убрать убивающий доверие placeholder-контент, начать собирать SEO-трафик.",
+        checklist:["Удалить 3 шаблонные записи","Написать «Обзор коллекции Калипсо: чем отличается от конкурентов»","Написать «Как выбрать модульный диван для вашего салона»","Написать «SOFT Divan: от цеха до партнёра — как мы работаем»"],
+        linkedFindingIds:["blog-placeholder"], linkedEvidenceIds:["evidence-blog"] },
+      { id:"task-geo", title:"Добавить географию и карточку в Яндекс/2ГИС", status:"Запланировано", priority:"urgent", owner:"Клиент", deadline:"7 дней",
+        expectedEffect:"Клиент сразу понимает, где производство и сколько стоит доставка.",
+        checklist:["Добавить город + адрес в футер и страницу контактов","Зарегистрировать производство в Яндекс.Бизнес","Загрузить 10+ фото цеха","Указать регионы доставки на главной"],
+        linkedFindingIds:["no-geo"], linkedEvidenceIds:[] },
+      { id:"task-social", title:"Запустить Telegram-канал производителя", status:"Запланировано", priority:"urgent", owner:"Исполнитель + клиент", deadline:"14 дней",
+        expectedEffect:"B2B клиент видит живое производство, убеждается в надёжности.",
+        checklist:["Создать канал @softdivan_mebel","Написать приветственный пост о производстве","5 постов на первую неделю: цех, новинки, условия, кейс партнёра","Добавить ссылку на канал на сайт"],
+        linkedFindingIds:["no-social"], linkedEvidenceIds:[] },
+      { id:"task-cta", title:"Разделить CTA по намерениям посетителя", status:"Запланировано", priority:"important", owner:"Исполнитель", deadline:"14 дней",
+        expectedEffect:"Снизить потерю «тёплых» посетителей, которые не готовы к заявке сразу.",
+        checklist:["«Скачать каталог» → PDF без формы","«Узнать оптовые цены» → быстрая форма","«Стать партнёром» → страница с условиями"],
+        linkedFindingIds:["single-cta"], linkedEvidenceIds:["evidence-home"] },
+      { id:"task-reviews", title:"Собрать реальные отзывы от 3–5 партнёров", status:"Запланировано", priority:"important", owner:"Клиент", deadline:"21 день",
+        expectedEffect:"Превратить «120 партнёров» из цифры в живое доказательство надёжности.",
+        checklist:["Написать 5 партнёрам из базы","Попросить 2–3 предложения + фото","Разместить на главной как карусель"],
+        linkedFindingIds:["no-reviews"], linkedEvidenceIds:[] }
+    ],
+    pages: [
+      { id:"page-home", type:"home", title:"Главная — SOFT Divan", url:"https://soft-divan.ru", description:"Производитель мягкой мебели B2B, коллекция Калипсо, форма партнёрства", statusCode:200, screenshot:"", signals:{ hasCta:true, hasPhone:false, imageCount:8, linkCount:18 }, excerpt:"Крупный производитель для вашего мебельного бизнеса. 120+ партнёров, 2500+ изделий, срок производства 7 дней." },
+      { id:"page-catalog-straight", type:"catalog", title:"Прямые диваны — каталог", url:"https://soft-divan.ru/catalog/pryamye_divany", description:"Диваны Калипсо 2х/3х-модульный, Берг, Мини — прямые модели", statusCode:200, screenshot:"", signals:{ hasCta:false, hasPhone:false, imageCount:12, linkCount:10 }, excerpt:"Кресло «Калипсо», Диван «Калипсо» 2х/3х-модульный. Размеры указаны, цены скрыты." },
+      { id:"page-catalog-angular", type:"catalog", title:"Угловые диваны — каталог", url:"https://soft-divan.ru/catalog/uglovye_divany", description:"Спейс, Прага, Грейс, Чикаго — угловые модели", statusCode:200, screenshot:"", signals:{ hasCta:false, hasPhone:false, imageCount:10, linkCount:8 }, excerpt:"Диван «Спейс» (Хит) 2700×1480, Прага, Грейс. Нет цен, нет сортировки." },
+      { id:"page-beds", type:"catalog", title:"Мягкие кровати — каталог", url:"https://soft-divan.ru/catalog/krovati", description:"Кровати с подъёмным механизмом: Хеппи, Леона Лофт, Марлен Лофт", statusCode:200, screenshot:"", signals:{ hasCta:false, hasPhone:false, imageCount:6, linkCount:6 }, excerpt:"Кровати в стиле Лофт 1400/1600 мм. Нет цен, изображения static (не optim) — загружаются медленнее." },
+      { id:"page-blog", type:"blog", title:"Блог — SOFT Divan", url:"https://soft-divan.ru/tpost/nsoiyca9t1-there-is-a-first-post-headline", description:"3 поста-заглушки на английском языке", statusCode:200, screenshot:"", signals:{ hasCta:false, hasPhone:false, imageCount:0, linkCount:3 }, excerpt:"«There is a first post headline» — Tilda-шаблон, не заменён реальным контентом." }
+    ],
+    evidence: [
+      { id:"evidence-home", pageId:"page-home", pageType:"home", title:"Главная страница", url:"https://soft-divan.ru", screenshot:"", statusCode:200, imagesFound:8, excerpt:"Нет цен, нет города, нет соцсетей. CTA «Стать партнёром» — одна кнопка для всех намерений." },
+      { id:"evidence-catalog", pageId:"page-catalog-straight", pageType:"catalog", title:"Каталог прямых диванов", url:"https://soft-divan.ru/catalog/pryamye_divany", screenshot:"", statusCode:200, imagesFound:12, excerpt:"Диван «Калипсо» 2х-модульный — Прямой 1800×850 — «р.» (цена пустая). Аналогично у всех 8 позиций." },
+      { id:"evidence-blog", pageId:"page-blog", pageType:"blog", title:"Блог (заглушка)", url:"https://soft-divan.ru/tpost/nsoiyca9t1-there-is-a-first-post-headline", screenshot:"", statusCode:200, imagesFound:0, excerpt:"«There is a first post headline» — Tilda placeholder, не заменён после публикации. SEO-вред." }
+    ],
+    plan: [
+      { period:"3–7 дней", title:"Убрать главные барьеры конверсии", taskIds:["task-prices","task-blog","task-geo"] },
+      { period:"2 недели", title:"Добавить канал и разделить CTA", taskIds:["task-social","task-cta"] },
+      { period:"3–4 недели", title:"Социальные доказательства", taskIds:["task-reviews"] }
+    ]
+  }
+};
+
 const fallbackFindings = [
   {
     id: "offer",
@@ -437,11 +538,12 @@ function buildDemoAudit(site, city, niche) {
 
 async function requestFirecrawlAudit(site, city, niche, channels) {
   setCrawlStatus("Firecrawl: карта сайта", 0);
-  // GitHub Pages — работаем в демо-режиме с реалистичными данными
   await new Promise((resolve) => setTimeout(resolve, 800));
   setCrawlStatus("Firecrawl: анализ страниц", 1);
   await new Promise((resolve) => setTimeout(resolve, 1200));
   setCrawlStatus("Firecrawl: аудит готов", 3);
+  const host = site.replace(/^https?:\/\/(www\.)?/, "").replace(/\/$/, "");
+  if (REAL_AUDITS[host]) return REAL_AUDITS[host];
   return buildDemoAudit(site, city, niche);
 }
 
@@ -572,3 +674,28 @@ renderAll();
 
 const savedClient = readClient();
 if (savedClient?.site && savedClient?.name) openCabinet(savedClient);
+
+// Auto-fill and auto-run from URL params: ?site=https://soft-divan.ru&city=Пенза&niche=Мебель&autorun=1
+(function handleUrlParams() {
+  const params = new URLSearchParams(window.location.search);
+  const site = params.get("site");
+  if (!site) return;
+  const city = params.get("city") || "Пенза";
+  const niche = params.get("niche") || "Мебель на заказ";
+  const autorun = params.get("autorun") === "1";
+  const autoClient = {
+    name: params.get("name") || "Демо",
+    contact: params.get("contact") || "@demo",
+    site, city, niche,
+    role: params.get("role") || "Собственник",
+    createdAt: new Date().toISOString()
+  };
+  saveClient(autoClient);
+  openCabinet(autoClient);
+  if (autorun) {
+    document.querySelector("#siteInput").value = site;
+    document.querySelector("#cityInput").value = city;
+    document.querySelector("#nicheInput").value = niche;
+    setTimeout(() => form.requestSubmit(), 600);
+  }
+})();
