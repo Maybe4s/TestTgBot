@@ -1,0 +1,784 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Marketing OS — Кабинет</title>
+  <style>
+    :root {
+      --bg: #0d0d0d;
+      --card: #141414;
+      --card2: #1a1a1a;
+      --border: #2a2a2a;
+      --ink: #f0f0f0;
+      --muted: #6b6b6b;
+      --accent: #7fff5f;
+      --coral: #ff7043;
+      --amber: #f5b84b;
+      --blue: #3d9bff;
+      --r: 8px;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, sans-serif;
+      box-sizing: border-box;
+    }
+    *, *::before, *::after { box-sizing: inherit; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body { background: var(--bg); color: var(--ink); line-height: 1.55; min-height: 100vh; }
+    button, input, select { font: inherit; }
+    button { cursor: pointer; }
+
+    /* ── REGISTRATION ───────────────────────────── */
+    .reg-screen {
+      display: grid;
+      grid-template-columns: 1fr 420px;
+      min-height: 100vh;
+      gap: 0;
+    }
+    .reg-screen.hidden { display: none; }
+    .reg-hero {
+      background:
+        radial-gradient(circle at 80% 10%, rgba(127,255,95,.12), transparent 30rem),
+        var(--card);
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 48px 60px;
+      gap: 48px;
+    }
+    .reg-form-col {
+      background: var(--card2);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 48px 40px;
+      border-left: 1px solid var(--border);
+    }
+    .logo-block { display: flex; align-items: center; gap: 14px; }
+    .logo-mark {
+      width: 44px; height: 44px;
+      background: var(--accent);
+      border-radius: 6px;
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 900; font-size: 14px; color: #000; letter-spacing: -1px;
+    }
+    .logo-label { font-size: 13px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; }
+    .reg-hero h1 { font-size: clamp(36px, 4vw, 60px); font-weight: 800; line-height: 1.05; letter-spacing: -2px; max-width: 700px; }
+    .reg-hero h1 em { font-style: normal; color: var(--accent); }
+    .reg-hero p { color: var(--muted); font-size: 17px; max-width: 560px; line-height: 1.6; }
+    .proof-list { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .proof-item {
+      background: var(--card2);
+      border: 1px solid var(--border);
+      border-radius: var(--r);
+      padding: 16px;
+    }
+    .proof-item strong { display: block; color: var(--accent); font-size: 12px; font-weight: 700; letter-spacing: .5px; text-transform: uppercase; margin-bottom: 4px; }
+    .proof-item span { font-size: 14px; color: var(--muted); }
+
+    /* Form */
+    .reg-form-col h2 { font-size: 24px; font-weight: 800; margin-bottom: 6px; }
+    .reg-form-col .sub { font-size: 13px; color: var(--muted); margin-bottom: 28px; }
+    #registrationForm { display: flex; flex-direction: column; gap: 14px; }
+    #registrationForm label { display: flex; flex-direction: column; gap: 5px; font-size: 13px; font-weight: 600; color: var(--muted); }
+    #registrationForm input,
+    #registrationForm select {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: var(--r);
+      color: var(--ink);
+      padding: 10px 13px;
+      font-size: 14px;
+      transition: border-color .15s;
+    }
+    #registrationForm input:focus,
+    #registrationForm select:focus { outline: none; border-color: var(--accent); }
+    #registrationForm select option { background: #1a1a1a; }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .consent-row { flex-direction: row !important; align-items: center; gap: 10px !important; color: var(--muted) !important; font-size: 13px !important; }
+    .consent-row input { width: 16px; height: 16px; accent-color: var(--accent); }
+    .btn-primary {
+      background: var(--accent);
+      color: #000;
+      font-weight: 800;
+      font-size: 15px;
+      border: none;
+      border-radius: var(--r);
+      padding: 13px;
+      letter-spacing: -.3px;
+      margin-top: 4px;
+    }
+    .btn-primary:hover { background: #9fff7f; }
+
+    /* ── APP SHELL ──────────────────────────────── */
+    .app-shell {
+      display: grid;
+      grid-template-columns: 220px 1fr;
+      min-height: 100vh;
+    }
+    .app-shell.locked { display: none; }
+
+    .sidebar {
+      background: var(--card);
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      padding: 24px 16px;
+      gap: 24px;
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      overflow-y: auto;
+    }
+    .nav-list { display: flex; flex-direction: column; gap: 2px; flex: 1; }
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 9px 12px;
+      border-radius: var(--r);
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--muted);
+      background: none;
+      border: none;
+      text-align: left;
+      transition: color .15s, background .15s;
+    }
+    .nav-item:hover { background: var(--card2); color: var(--ink); }
+    .nav-item.active { background: var(--card2); color: var(--ink); }
+    .nav-item .nav-icon {
+      width: 22px; height: 22px;
+      background: var(--border);
+      border-radius: 4px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 10px;
+      font-weight: 900;
+      color: var(--muted);
+      flex-shrink: 0;
+    }
+    .nav-item.active .nav-icon { background: var(--accent); color: #000; }
+    .sidebar-bot {
+      background: var(--card2);
+      border: 1px solid var(--border);
+      border-radius: var(--r);
+      padding: 14px;
+    }
+    .sidebar-bot .eyebrow { font-size: 10px; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 6px; font-weight: 700; }
+    .sidebar-bot strong { font-size: 13px; display: block; margin-bottom: 4px; }
+    .sidebar-bot span { font-size: 12px; color: var(--muted); line-height: 1.4; display: block; }
+
+    /* ── WORKSPACE ──────────────────────────────── */
+    .workspace { display: flex; flex-direction: column; min-width: 0; }
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      background: rgba(13,13,13,.88);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      padding: 14px 28px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+    .topbar .eyebrow { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; font-weight: 700; margin-bottom: 2px; }
+    .topbar h2 { font-size: 15px; font-weight: 700; letter-spacing: -.3px; }
+    .topbar-actions { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
+    .status-pill {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: #0f2a0f;
+      border: 1px solid #1a4a1a;
+      color: var(--accent);
+      font-size: 12px;
+      font-weight: 700;
+      padding: 5px 12px;
+      border-radius: 999px;
+    }
+    .pulse { width: 6px; height: 6px; background: var(--accent); border-radius: 50%; animation: pulse 1.5s ease-in-out infinite; }
+    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.3} }
+    .btn-sm {
+      background: var(--card2);
+      border: 1px solid var(--border);
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 600;
+      padding: 5px 12px;
+      border-radius: var(--r);
+    }
+    .btn-sm:hover { color: var(--ink); border-color: #444; }
+
+    /* ── PANELS ─────────────────────────────────── */
+    .panel { display: none; flex-direction: column; gap: 0; padding: 24px 28px; }
+    .panel.active { display: flex; }
+    .panel-heading {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 20px; gap: 12px;
+    }
+    .panel-title { font-size: 18px; font-weight: 800; letter-spacing: -.5px; }
+    .eyebrow { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; font-weight: 700; }
+
+    /* Audit form */
+    .audit-form-band {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--r);
+      padding: 18px;
+      margin-bottom: 18px;
+    }
+    .audit-form {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr 1fr auto;
+      gap: 10px;
+      align-items: end;
+    }
+    .audit-form label { display: flex; flex-direction: column; gap: 4px; font-size: 12px; font-weight: 600; color: var(--muted); }
+    .audit-form input,
+    .audit-form select {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: var(--r);
+      color: var(--ink);
+      padding: 8px 11px;
+      font-size: 13px;
+    }
+    .audit-form input:focus,
+    .audit-form select:focus { outline: none; border-color: var(--accent); }
+    .audit-form select option { background: #1a1a1a; }
+    .channels-field { border: none; padding: 0; }
+    .channels-field legend { font-size: 12px; font-weight: 600; color: var(--muted); margin-bottom: 4px; display: block; }
+    .channels-field label { flex-direction: row; align-items: center; gap: 6px; font-size: 12px; color: var(--muted); margin-bottom: 2px; }
+    .channels-field input[type=checkbox] { accent-color: var(--accent); }
+    .btn-run {
+      background: var(--accent);
+      color: #000;
+      font-weight: 800;
+      font-size: 13px;
+      border: none;
+      border-radius: var(--r);
+      padding: 9px 18px;
+      white-space: nowrap;
+      align-self: end;
+    }
+    .btn-run:hover { background: #9fff7f; }
+
+    /* Score strip */
+    .score-strip {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+      margin-bottom: 18px;
+    }
+    .score-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--r);
+      padding: 16px;
+    }
+    .score-card span { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: .5px; font-weight: 700; display: block; margin-bottom: 4px; }
+    .score-card strong { font-size: 28px; font-weight: 900; display: block; letter-spacing: -1px; }
+    .score-card small { font-size: 12px; color: var(--muted); }
+    .score-card.accent { border-color: rgba(127,255,95,.3); background: #0a1a0a; }
+    .score-card.accent strong { color: var(--accent); }
+
+    /* Crawl status */
+    .crawl-band {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--r);
+      padding: 14px 18px;
+      margin-bottom: 18px;
+      display: none;
+    }
+    .crawl-band.visible { display: block; }
+    #crawlStatus { font-size: 13px; color: var(--muted); }
+    .process-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+      margin-top: 12px;
+    }
+    .process-card {
+      background: var(--card2);
+      border: 1px solid var(--border);
+      border-radius: var(--r);
+      padding: 10px 12px;
+      font-size: 12px;
+      color: var(--muted);
+      opacity: .5;
+    }
+    .process-card.active { border-color: var(--accent); color: var(--ink); opacity: 1; }
+    .process-card strong { display: block; color: var(--accent); font-size: 10px; text-transform: uppercase; letter-spacing: .5px; margin-bottom: 4px; }
+
+    /* Audit tabs */
+    .audit-tabs { display: flex; gap: 0; border-bottom: 1px solid var(--border); margin-bottom: 20px; }
+    .audit-tab {
+      padding: 9px 16px;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--muted);
+      background: none;
+      border: none;
+      border-bottom: 2px solid transparent;
+      margin-bottom: -1px;
+    }
+    .audit-tab:hover { color: var(--ink); }
+    .audit-tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+    .audit-tab-panel { display: none; }
+    .audit-tab-panel.active { display: block; }
+
+    /* Finding rows */
+    .audit-grid { display: flex; flex-direction: column; gap: 0; }
+    .finding-row {
+      display: grid;
+      grid-template-columns: 52px 1fr;
+      gap: 0 20px;
+      padding: 20px 0;
+      border-bottom: 1px solid var(--border);
+      cursor: pointer;
+    }
+    .finding-row:first-child { border-top: 1px solid var(--border); }
+    .finding-row:hover { background: rgba(255,255,255,.02); }
+    .finding-num-col { display: flex; flex-direction: column; align-items: center; gap: 8px; padding-top: 2px; }
+    .finding-num { font-size: 26px; font-weight: 900; color: var(--ink); line-height: 1; }
+    .finding-sev { font-size: 9px; font-weight: 900; text-transform: uppercase; letter-spacing: .5px; padding: 3px 6px; border-radius: 3px; white-space: nowrap; }
+    .finding-sev.urgent { background: rgba(255,112,67,.2); color: var(--coral); }
+    .finding-sev.important { background: rgba(245,184,75,.15); color: var(--amber); }
+    .finding-sev.later { background: rgba(61,155,255,.15); color: var(--blue); }
+    .finding-body-col { min-width: 0; }
+    .finding-meta { margin-bottom: 6px; }
+    .module-badge {
+      font-size: 11px; font-weight: 700;
+      background: var(--card2);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 2px 8px;
+      color: var(--muted);
+    }
+    .finding-title { font-size: 16px; font-weight: 700; margin-bottom: 8px; letter-spacing: -.3px; }
+    .finding-loss {
+      background: rgba(255,112,67,.08);
+      border-left: 3px solid var(--coral);
+      padding: 8px 12px;
+      margin-bottom: 10px;
+      border-radius: 0 4px 4px 0;
+      font-size: 13px;
+      line-height: 1.5;
+    }
+    .finding-loss strong { color: var(--coral); }
+    .finding-summary { color: var(--muted); font-size: 12px; line-height: 1.5; margin-bottom: 12px; }
+    .finding-shot-wrap { margin-bottom: 12px; }
+    .finding-shot { width: 100%; max-height: 200px; object-fit: cover; object-position: top; border-radius: 6px; border: 1px solid var(--border); display: block; }
+    .finding-shot-label { font-size: 11px; color: var(--muted); margin-top: 4px; font-style: italic; }
+    .finding-fix { font-size: 12px; color: var(--muted); display: flex; flex-wrap: wrap; align-items: baseline; gap: 8px; }
+    .finding-fix strong { color: var(--ink); }
+    .inline-action {
+      background: var(--card2);
+      border: 1px solid var(--border);
+      color: var(--accent);
+      font-size: 12px;
+      font-weight: 700;
+      padding: 4px 10px;
+      border-radius: var(--r);
+    }
+    .inline-action:hover { border-color: var(--accent); }
+    .expert-btn {
+      background: var(--card2);
+      border: 1px solid var(--border);
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 600;
+      padding: 5px 12px;
+      border-radius: var(--r);
+    }
+
+    /* Pages grid */
+    .filter-bar { display: flex; gap: 6px; margin-bottom: 16px; flex-wrap: wrap; }
+    .filter-chip {
+      background: var(--card);
+      border: 1px solid var(--border);
+      color: var(--muted);
+      font-size: 12px; font-weight: 600;
+      padding: 5px 12px; border-radius: 999px;
+    }
+    .filter-chip.active { background: var(--card2); border-color: var(--accent); color: var(--accent); }
+    .pages-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; }
+    .page-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--r);
+      overflow: hidden;
+    }
+    .page-card img { width: 100%; height: 140px; object-fit: cover; object-position: top; display: block; border-bottom: 1px solid var(--border); }
+    .page-card-body { padding: 14px; }
+    .page-card-body h3 { font-size: 14px; font-weight: 700; margin-bottom: 6px; }
+    .page-card-body p { font-size: 12px; color: var(--muted); margin-bottom: 8px; line-height: 1.4; }
+    .page-card-body a { font-size: 11px; color: var(--blue); word-break: break-all; }
+    .status-badge { font-size: 11px; font-weight: 700; background: var(--card2); border: 1px solid var(--border); padding: 2px 7px; border-radius: 4px; color: var(--muted); }
+    .audit-topline { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 8px; }
+    .signal-grid { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+    .signal-grid span { font-size: 11px; background: var(--card2); border: 1px solid var(--border); border-radius: 4px; padding: 2px 8px; color: var(--muted); }
+
+    /* Evidence */
+    #evidenceBand { margin-bottom: 18px; }
+    .evidence-band-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
+    .evidence-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+    .evidence-card { background: var(--card); border: 1px solid var(--border); border-radius: var(--r); overflow: hidden; }
+    .evidence-shot { width: 100%; height: 120px; object-fit: cover; object-position: top; display: block; border-bottom: 1px solid var(--border); }
+    .evidence-shot--empty { display: flex; align-items: center; justify-content: center; background: var(--card2); color: var(--muted); font-size: 12px; text-align: center; padding: 16px; height: 120px; }
+    .evidence-body { padding: 12px; }
+    .evidence-body h3 { font-size: 13px; font-weight: 700; margin-bottom: 4px; }
+    .evidence-body p { font-size: 12px; color: var(--muted); line-height: 1.4; }
+    .evidence-meta { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
+    .evidence-warning { color: var(--coral); font-size: 11px; margin-top: 6px; }
+
+    /* Tasks */
+    .crm-layout { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+    .crm-col { background: var(--card); border: 1px solid var(--border); border-radius: var(--r); }
+    .crm-col-head { padding: 14px 16px; border-bottom: 1px solid var(--border); font-size: 13px; font-weight: 700; display: flex; align-items: center; justify-content: space-between; }
+    .crm-col-head .cnt { font-size: 11px; font-weight: 700; background: var(--card2); border: 1px solid var(--border); border-radius: 999px; padding: 2px 8px; color: var(--muted); }
+    .crm-col-body { padding: 10px; display: flex; flex-direction: column; gap: 8px; min-height: 200px; }
+    .task-card {
+      background: var(--card2);
+      border: 1px solid var(--border);
+      border-radius: var(--r);
+      padding: 12px;
+      cursor: pointer;
+    }
+    .task-card:hover { border-color: #444; }
+    .task-card h4 { font-size: 13px; font-weight: 700; margin-bottom: 6px; line-height: 1.3; }
+    .task-card-meta { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+    .priority-badge {
+      font-size: 10px; font-weight: 900; border-radius: 3px; padding: 2px 7px; text-transform: uppercase; letter-spacing: .4px;
+    }
+    .priority-badge.urgent { background: rgba(255,112,67,.2); color: var(--coral); }
+    .priority-badge.important { background: rgba(245,184,75,.15); color: var(--amber); }
+    .priority-badge.later { background: rgba(61,155,255,.15); color: var(--blue); }
+    .owner-badge { font-size: 11px; color: var(--muted); }
+    .deadline-badge { font-size: 11px; color: var(--muted); }
+
+    /* Task rows (roadmap view) */
+    .tasks-list-head { display: grid; grid-template-columns: 1fr 100px 120px 100px; gap: 12px; padding: 8px 0; border-bottom: 1px solid var(--border); margin-bottom: 4px; }
+    .tasks-list-head span { font-size: 11px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: .5px; }
+    .task-row {
+      display: grid;
+      grid-template-columns: 1fr 100px 120px 100px;
+      gap: 12px;
+      padding: 12px 0;
+      border-bottom: 1px solid var(--border);
+      cursor: pointer;
+      align-items: center;
+    }
+    .task-row:hover { background: rgba(255,255,255,.02); }
+    .task-row h4 { font-size: 13px; font-weight: 600; }
+    .task-row .status-dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; margin-right: 6px; }
+    .status-dot.active { background: var(--accent); }
+    .status-dot.planned { background: var(--muted); }
+    .status-dot.done { background: var(--blue); }
+
+    /* Roadmap timeline */
+    .timeline { display: flex; flex-direction: column; gap: 20px; }
+    .timeline-item { background: var(--card); border: 1px solid var(--border); border-radius: var(--r); padding: 18px; }
+    .timeline-period { font-size: 11px; font-weight: 700; color: var(--accent); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px; }
+    .timeline-title { font-size: 16px; font-weight: 800; margin-bottom: 12px; }
+    .timeline-tasks { display: flex; flex-direction: column; gap: 6px; }
+    .timeline-task-row { display: flex; align-items: center; gap: 10px; font-size: 13px; }
+    .timeline-task-row::before { content: '→'; color: var(--muted); flex-shrink: 0; }
+
+    /* Analytics */
+    .analytics-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+    .analytics-card { background: var(--card); border: 1px solid var(--border); border-radius: var(--r); padding: 18px; }
+    .analytics-card h3 { font-size: 14px; font-weight: 700; margin-bottom: 14px; }
+    .metric-row { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-top: 1px solid var(--border); font-size: 13px; }
+    .metric-row:first-of-type { border-top: none; }
+    .metric-val { font-weight: 700; color: var(--accent); }
+    .bar-chart { display: grid; grid-template-columns: repeat(7, 1fr); align-items: end; gap: 4px; height: 60px; margin-top: 12px; }
+    .bar-chart span { display: block; border-radius: 3px 3px 0 0; background: linear-gradient(180deg, var(--accent), rgba(127,255,95,.3)); }
+
+    /* Client feed */
+    #clientFeed { display: flex; flex-direction: column; gap: 10px; }
+    .feed-item { background: var(--card); border: 1px solid var(--border); border-radius: var(--r); padding: 14px; display: flex; align-items: flex-start; gap: 12px; }
+    .feed-icon { width: 32px; height: 32px; border-radius: 50%; background: var(--card2); border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; font-size: 13px; flex-shrink: 0; }
+    .feed-body h4 { font-size: 13px; font-weight: 700; margin-bottom: 2px; }
+    .feed-body p { font-size: 12px; color: var(--muted); }
+
+    /* Task drawer */
+    .drawer-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,.6); z-index: 100; }
+    .drawer-overlay.open { display: block; }
+    .task-drawer {
+      position: fixed; top: 0; right: -520px; width: 500px; height: 100vh;
+      background: var(--card); border-left: 1px solid var(--border);
+      z-index: 101; transition: right .25s ease;
+      overflow-y: auto; padding: 28px;
+      display: flex; flex-direction: column; gap: 20px;
+    }
+    .task-drawer.open { right: 0; }
+    .drawer-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; }
+    .drawer-close {
+      width: 32px; height: 32px;
+      background: var(--card2); border: 1px solid var(--border);
+      border-radius: 50%; font-size: 16px; color: var(--muted);
+      flex-shrink: 0; display: flex; align-items: center; justify-content: center;
+    }
+    .drawer-close:hover { color: var(--ink); }
+    .drawer-section { border-top: 1px solid var(--border); padding-top: 16px; }
+    .drawer-section h4 { font-size: 12px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: .5px; margin-bottom: 10px; }
+    .checklist { display: flex; flex-direction: column; gap: 8px; }
+    .checklist-item { display: flex; align-items: flex-start; gap: 10px; font-size: 13px; }
+    .check-box { width: 16px; height: 16px; background: var(--card2); border: 1px solid var(--border); border-radius: 3px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
+    .drawer-evidence { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
+    .drawer-evidence a { display: block; }
+    .drawer-evidence img { width: 100%; height: 90px; object-fit: cover; object-position: top; border-radius: 4px; border: 1px solid var(--border); }
+
+    /* Responsive */
+    @media (max-width: 1024px) {
+      .reg-screen { grid-template-columns: 1fr; }
+      .reg-hero { display: none; }
+      .app-shell { grid-template-columns: 64px 1fr; }
+      .nav-item span:last-child { display: none; }
+      .nav-item .nav-icon { margin: 0 auto; }
+      .sidebar { padding: 16px 10px; }
+      .score-strip { grid-template-columns: repeat(2, 1fr); }
+      .evidence-grid, .pages-grid { grid-template-columns: repeat(2, 1fr); }
+      .crm-layout { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 720px) {
+      .app-shell { grid-template-columns: 1fr; }
+      .sidebar { position: static; height: auto; flex-direction: row; overflow-x: auto; }
+      .nav-list { flex-direction: row; }
+      .audit-form { grid-template-columns: 1fr 1fr; }
+      .score-strip { grid-template-columns: repeat(2, 1fr); }
+      .evidence-grid, .pages-grid, .analytics-grid { grid-template-columns: 1fr; }
+      .finding-row { grid-template-columns: 36px 1fr; gap: 0 10px; }
+      .task-drawer { width: 100%; right: -100%; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── REGISTRATION ───────────────────────────── -->
+<section class="reg-screen" id="registrationScreen">
+  <div class="reg-hero">
+    <div class="logo-block">
+      <div class="logo-mark">MO</div>
+      <div>
+        <div class="logo-label">Marketing OS</div>
+      </div>
+    </div>
+    <div>
+      <h1>Карта потерь и план роста — за <em>10 секунд</em></h1>
+      <p style="margin-top:16px">Вводите сайт компании. Система сканирует страницы, находит слабые места и собирает план работ с задачами и дедлайнами.</p>
+    </div>
+    <div class="proof-list">
+      <div class="proof-item"><strong>01</strong><span>Аудит: SEO, GEO, контент, заявки, соцсети</span></div>
+      <div class="proof-item"><strong>02</strong><span>Дорожная карта с задачами и дедлайнами</span></div>
+      <div class="proof-item"><strong>03</strong><span>CRM-доска: Ждём / В работе / Готово</span></div>
+      <div class="proof-item"><strong>04</strong><span>Аналитика по каналам и динамика роста</span></div>
+    </div>
+  </div>
+  <div class="reg-form-col">
+    <h2>Войти в кабинет</h2>
+    <p class="sub">Данные используются только для персонализации аудита</p>
+    <form id="registrationForm">
+      <label>Имя<input id="clientNameInput" type="text" placeholder="Иван" required /></label>
+      <label>Telegram или телефон<input id="clientContactInput" type="text" placeholder="@username или +7..." required /></label>
+      <label>Сайт компании<input id="registrationSiteInput" type="url" placeholder="https://example.ru" value="https://soft-divan.ru" required /></label>
+      <div class="form-row">
+        <label>Город<input id="registrationCityInput" type="text" value="Пенза" required /></label>
+        <label>Роль<select id="clientRoleInput"><option>Собственник</option><option>Маркетолог</option><option>Руководитель продаж</option></select></label>
+      </div>
+      <label>Ниша<select id="registrationNicheInput"><option>Строительство и ремонт</option><option>Мебель на заказ</option><option>Остекление</option><option>Локальные услуги</option></select></label>
+      <label class="consent-row"><input id="consentInput" type="checkbox" required />Получить демо-аудит и рекомендации</label>
+      <button class="btn-primary" type="submit">Открыть кабинет →</button>
+    </form>
+  </div>
+</section>
+
+<!-- ── APP SHELL ──────────────────────────────── -->
+<div class="app-shell locked" id="appShell" aria-hidden="true">
+
+  <aside class="sidebar">
+    <div class="logo-block" style="flex-shrink:0">
+      <div class="logo-mark">MO</div>
+      <div style="min-width:0">
+        <div class="logo-label">Marketing OS</div>
+      </div>
+    </div>
+    <nav class="nav-list">
+      <button class="nav-item active" data-panel="audit"><span class="nav-icon">01</span>Аудит</button>
+      <button class="nav-item" data-panel="roadmap"><span class="nav-icon">02</span>План работ</button>
+      <button class="nav-item" data-panel="crm"><span class="nav-icon">03</span>CRM</button>
+      <button class="nav-item" data-panel="analytics"><span class="nav-icon">04</span>Аналитика</button>
+    </nav>
+    <div class="sidebar-bot">
+      <div class="eyebrow">Бот</div>
+      <strong id="botStatus">Ждёт аудита</strong>
+      <span id="botMessage">Запустите аудит — бот отправит итог клиенту.</span>
+    </div>
+  </aside>
+
+  <div class="workspace">
+    <!-- Topbar -->
+    <div class="topbar">
+      <div>
+        <div class="eyebrow" id="clientAccessLabel">Демо-доступ</div>
+        <h2>Вставьте сайт — получите карту потерь</h2>
+      </div>
+      <div class="topbar-actions">
+        <div class="status-pill"><span class="pulse"></span>Кабинет открыт</div>
+        <button class="btn-sm" id="logoutButton">Выйти</button>
+      </div>
+    </div>
+
+    <!-- AUDIT PANEL -->
+    <div class="panel active" id="audit">
+      <!-- Audit form -->
+      <div class="audit-form-band">
+        <form id="auditForm" class="audit-form">
+          <label>Сайт<input id="siteInput" type="url" value="https://soft-divan.ru" required /></label>
+          <label>Ниша<select id="nicheInput"><option>Строительство и ремонт</option><option>Мебель на заказ</option><option>Остекление</option><option>Локальные услуги</option></select></label>
+          <label>Город<input id="cityInput" type="text" value="Пенза" required /></label>
+          <fieldset class="channels-field">
+            <legend>Каналы</legend>
+            <label><input type="checkbox" value="Сайт" checked>Сайт</label>
+            <label><input type="checkbox" value="Telegram" checked>Telegram</label>
+            <label><input type="checkbox" value="Карты" checked>Карты</label>
+          </fieldset>
+          <button class="btn-run" type="submit">Запустить →</button>
+        </form>
+      </div>
+
+      <!-- Score strip -->
+      <div class="score-strip">
+        <div class="score-card accent"><span>Скоринг</span><strong id="scoreValue">—</strong><small id="scoreLabel">запустите аудит</small></div>
+        <div class="score-card"><span>Слабых мест</span><strong id="issueCount">—</strong><small>превратятся в задачи</small></div>
+        <div class="score-card"><span>Быстрый эффект</span><strong>14 дней</strong><small>первые правки</small></div>
+        <div class="score-card"><span>Пакет</span><strong id="packageName">—</strong><small>по итогам аудита</small></div>
+      </div>
+
+      <!-- Crawl progress -->
+      <div class="crawl-band" id="crawlStatus">
+        <div class="process-grid" id="processGrid">
+          <div class="process-card"><strong>01</strong>Карта сайта</div>
+          <div class="process-card"><strong>02</strong>Анализ страниц</div>
+          <div class="process-card"><strong>03</strong>SEO и GEO</div>
+          <div class="process-card"><strong>04</strong>Отчёт</div>
+        </div>
+      </div>
+
+      <!-- Audit tabs -->
+      <div class="audit-tabs">
+        <button class="audit-tab active" data-audit-tab="findings">Находки</button>
+        <button class="audit-tab" data-audit-tab="pages">Страницы</button>
+        <button class="audit-tab" data-audit-tab="evidence">Доказательства</button>
+      </div>
+
+      <div class="audit-tab-panel active" id="auditTab-findings">
+        <div style="display:flex;justify-content:flex-end;margin-bottom:12px">
+          <button class="expert-btn" id="expertMode">Добавить экспертный слой</button>
+        </div>
+        <div id="auditGrid"></div>
+      </div>
+
+      <div class="audit-tab-panel" id="auditTab-pages">
+        <div class="filter-bar">
+          <button class="filter-chip active" data-page-filter="all">Все</button>
+          <button class="filter-chip" data-page-filter="home">Главная</button>
+          <button class="filter-chip" data-page-filter="catalog">Каталог</button>
+          <button class="filter-chip" data-page-filter="blog">Блог</button>
+        </div>
+        <div class="pages-grid" id="pagesGrid"></div>
+      </div>
+
+      <div class="audit-tab-panel" id="auditTab-evidence">
+        <div id="evidenceBand">
+          <div class="evidence-band-head">
+            <span class="eyebrow">Скриншоты страниц</span>
+            <a id="auditArchiveLink" href="#" style="font-size:12px;color:var(--blue)">Архив проверки</a>
+          </div>
+          <div class="evidence-grid" id="evidenceGrid"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ROADMAP PANEL -->
+    <div class="panel" id="roadmap">
+      <div class="panel-heading">
+        <span class="panel-title">План работ</span>
+      </div>
+      <div class="tasks-list-head">
+        <span>Задача</span><span>Приоритет</span><span>Ответственный</span><span>Срок</span>
+      </div>
+      <div id="tasksList"></div>
+      <div class="timeline" id="timeline" style="margin-top:28px"></div>
+      <div id="auditPlan"></div>
+    </div>
+
+    <!-- CRM PANEL -->
+    <div class="panel" id="crm">
+      <div class="panel-heading"><span class="panel-title">CRM-доска</span></div>
+      <div class="crm-layout">
+        <div class="crm-col">
+          <div class="crm-col-head">Ждём клиента <span class="cnt" id="waitingCount">0</span></div>
+          <div class="crm-col-body" id="waitingList"></div>
+        </div>
+        <div class="crm-col">
+          <div class="crm-col-head">В работе <span class="cnt" id="activeCount">0</span></div>
+          <div class="crm-col-body" id="activeList"></div>
+        </div>
+        <div class="crm-col">
+          <div class="crm-col-head">Готово <span class="cnt" id="readyCount">0</span></div>
+          <div class="crm-col-body" id="readyList"></div>
+        </div>
+      </div>
+      <div style="margin-top:24px">
+        <div class="panel-heading"><span class="panel-title" style="font-size:15px">Активность клиентов</span></div>
+        <div id="clientFeed"></div>
+      </div>
+    </div>
+
+    <!-- ANALYTICS PANEL -->
+    <div class="panel" id="analytics">
+      <div class="panel-heading"><span class="panel-title">Аналитика</span></div>
+      <div class="analytics-grid" id="analyticsGrid"></div>
+    </div>
+  </div>
+</div>
+
+<!-- Task drawer -->
+<div class="drawer-overlay" id="drawerOverlay"></div>
+<div class="task-drawer" id="taskDrawer">
+  <div class="drawer-head">
+    <div id="drawerContent"></div>
+    <button class="drawer-close" id="drawerClose">✕</button>
+  </div>
+</div>
+
+<script src="audit-app.js"></script>
+<script>
+// Show/hide crawl band during audit
+const _orig = window.setCrawlStatus;
+const _crawlBand = document.querySelector("#crawlStatus");
+const _origRunAudit = window.runAudit;
+const _drawerEl = document.querySelector("#taskDrawer");
+const _overlayEl = document.querySelector("#drawerOverlay");
+
+// Patch drawer open/close to sync overlay
+const _origOpen = _drawerEl.classList.add.bind(_drawerEl.classList);
+const observer = new MutationObserver(() => {
+  if (_drawerEl.classList.contains("open")) {
+    _overlayEl.classList.add("open");
+  } else {
+    _overlayEl.classList.remove("open");
+  }
+});
+observer.observe(_drawerEl, { attributes: true, attributeFilter: ["class"] });
+_overlayEl.addEventListener("click", () => {
+  _drawerEl.classList.remove("open");
+});
+
+// Unused cleanup
+void 0;
+</script>
+</body>
+</html>
