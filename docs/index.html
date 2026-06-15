@@ -161,6 +161,62 @@
       border: none;
       display: block;
     }
+    .demo-mobile-cta { display: none; }
+    @media (max-width: 900px) {
+      .demo-embed { display: none; }
+      .demo-mobile-cta {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 20px;
+        margin-top: 32px;
+        padding: 32px 24px;
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        text-align: center;
+      }
+      .demo-mobile-cta .demo-steps {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+        width: 100%;
+      }
+      .demo-mobile-cta .demo-step {
+        background: var(--bg2);
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        padding: 14px 12px;
+        font-size: 13px;
+        color: var(--muted);
+        text-align: left;
+      }
+      .demo-mobile-cta .demo-step strong {
+        display: block;
+        color: var(--accent);
+        font-size: 11px;
+        letter-spacing: .5px;
+        margin-bottom: 4px;
+        text-transform: uppercase;
+      }
+      .demo-mobile-cta .btn-demo {
+        display: block;
+        width: 100%;
+        padding: 16px;
+        background: var(--accent);
+        color: #000;
+        font-weight: 700;
+        font-size: 16px;
+        border-radius: 8px;
+        text-decoration: none;
+        text-align: center;
+        letter-spacing: -.2px;
+      }
+      .demo-mobile-cta .btn-demo-sub {
+        font-size: 12px;
+        color: var(--muted);
+      }
+    }
   </style>
 </head>
 <body>
@@ -208,6 +264,16 @@
       scrolling="yes"
       loading="lazy"
     ></iframe>
+  </div>
+  <div class="demo-mobile-cta">
+    <div class="demo-steps">
+      <div class="demo-step"><strong>01</strong>Введите сайт, город и нишу</div>
+      <div class="demo-step"><strong>02</strong>Аудит запускается за 10 сек</div>
+      <div class="demo-step"><strong>03</strong>Карта потерь и 6 слабых мест</div>
+      <div class="demo-step"><strong>04</strong>CRM + план работ уже внутри</div>
+    </div>
+    <a class="btn-demo" href="audit.html">Открыть демо-кабинет →</a>
+    <span class="btn-demo-sub">Без регистрации — данные останутся только у вас</span>
   </div>
 </div>
 
