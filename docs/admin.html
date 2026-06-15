@@ -3,582 +3,453 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<title>Admin Panel</title>
+<title>SEDOM Admin</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <style>
-  :root {
-    --bg: #0e1117;
-    --card: #161b25;
-    --border: #1e2533;
-    --accent: #4f8ef7;
-    --accent2: #7c5cbf;
-    --text: #e8ecf1;
-    --muted: #6b7897;
-    --green: #2ecc71;
-    --orange: #f39c12;
-    --red: #e74c3c;
-  }
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  body {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-    background: var(--bg);
-    color: var(--text);
-    min-height: 100vh;
-    padding-bottom: 80px;
-  }
+:root {
+  --bg: #0e1117; --card: #161b25; --border: #1e2533;
+  --accent: #4f8ef7; --accent2: #7c5cbf;
+  --text: #e8ecf1; --muted: #6b7897;
+  --green: #2ecc71; --orange: #f39c12; --red: #e74c3c;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  background: var(--bg); color: var(--text);
+  min-height: 100vh; padding-bottom: 72px; overflow-x: hidden;
+}
 
-  /* HEADER */
-  .header {
-    background: var(--card);
-    border-bottom: 1px solid var(--border);
-    padding: 14px 16px;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    position: sticky;
-    top: 0;
-    z-index: 100;
-  }
-  .header-logo {
-    width: 36px; height: 36px;
-    background: linear-gradient(135deg, var(--accent), var(--accent2));
-    border-radius: 10px;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 18px; font-weight: 700; color: #fff;
-    flex-shrink: 0;
-  }
-  .header-info { flex: 1; min-width: 0; }
-  .header-title { font-size: 16px; font-weight: 700; }
-  .header-sub { font-size: 12px; color: var(--muted); margin-top: 1px; }
-  .status-dot {
-    width: 8px; height: 8px; border-radius: 50%;
-    background: var(--green);
-    box-shadow: 0 0 6px var(--green);
-    flex-shrink: 0;
-  }
+/* HEADER */
+.header {
+  background: var(--card); border-bottom: 1px solid var(--border);
+  padding: 12px 16px; display: flex; align-items: center; gap: 10px;
+  position: sticky; top: 0; z-index: 100;
+}
+.logo {
+  width: 34px; height: 34px; border-radius: 9px; flex-shrink: 0;
+  background: linear-gradient(135deg, var(--accent), var(--accent2));
+  display: flex; align-items: center; justify-content: center;
+  font-weight: 800; font-size: 16px; color: #fff;
+}
+.header-info { flex: 1; min-width: 0; }
+.header-title { font-size: 15px; font-weight: 700; }
+.header-sub { font-size: 11px; color: var(--muted); }
+.header-actions { display: flex; gap: 8px; align-items: center; }
+.icon-btn {
+  width: 32px; height: 32px; border-radius: 8px; border: none;
+  background: var(--border); color: var(--text); font-size: 15px;
+  cursor: pointer; display: flex; align-items: center; justify-content: center;
+  transition: opacity .2s;
+}
+.icon-btn:active { opacity: .7; }
+.dot { width: 7px; height: 7px; border-radius: 50%; background: var(--green); box-shadow: 0 0 5px var(--green); }
+.dot.off { background: var(--red); box-shadow: 0 0 5px var(--red); }
 
-  /* NAV TABS */
-  .nav {
-    display: flex;
-    background: var(--card);
-    border-bottom: 1px solid var(--border);
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
-    scrollbar-width: none;
-  }
-  .nav::-webkit-scrollbar { display: none; }
-  .nav-btn {
-    flex-shrink: 0;
-    padding: 12px 16px;
-    border: none;
-    background: transparent;
-    color: var(--muted);
-    font-size: 13px;
-    font-weight: 500;
-    cursor: pointer;
-    border-bottom: 2px solid transparent;
-    transition: all 0.2s;
-    white-space: nowrap;
-    display: flex; align-items: center; gap: 6px;
-  }
-  .nav-btn.active {
-    color: var(--accent);
-    border-bottom-color: var(--accent);
-  }
+/* NAV */
+.nav {
+  display: flex; background: var(--card); border-bottom: 1px solid var(--border);
+  overflow-x: auto; scrollbar-width: none; position: sticky; top: 58px; z-index: 99;
+}
+.nav::-webkit-scrollbar { display: none; }
+.nav-btn {
+  flex-shrink: 0; padding: 10px 14px; border: none; background: transparent;
+  color: var(--muted); font-size: 13px; font-weight: 500; cursor: pointer;
+  border-bottom: 2px solid transparent; white-space: nowrap;
+  display: flex; align-items: center; gap: 5px; transition: color .2s;
+}
+.nav-btn.active { color: var(--accent); border-bottom-color: var(--accent); }
 
-  /* PAGES */
-  .page { display: none; padding: 16px; }
-  .page.active { display: block; }
+/* PAGES */
+.page { display: none; padding: 14px 14px 20px; }
+.page.active { display: block; }
 
-  /* CARDS */
-  .card {
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: 14px;
-    padding: 16px;
-    margin-bottom: 12px;
-  }
-  .card-title {
-    font-size: 13px;
-    font-weight: 600;
-    color: var(--muted);
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    margin-bottom: 12px;
-  }
+/* CARDS */
+.card { background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 14px; margin-bottom: 12px; }
+.card-title { font-size: 11px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: .6px; margin-bottom: 12px; }
+.section-label { font-size: 11px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: .6px; margin: 14px 0 8px 2px; }
 
-  /* STAT GRID */
-  .stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 12px; }
-  .stat-item {
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 14px;
-    text-align: center;
-  }
-  .stat-value { font-size: 26px; font-weight: 800; color: var(--accent); line-height: 1; }
-  .stat-label { font-size: 11px; color: var(--muted); margin-top: 4px; }
+/* STAT GRID */
+.stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 14px; }
+.stat-item { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 14px; text-align: center; }
+.stat-value { font-size: 28px; font-weight: 800; color: var(--accent); line-height: 1; }
+.stat-label { font-size: 11px; color: var(--muted); margin-top: 4px; }
 
-  /* LIST */
-  .list-item {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 12px 0;
-    border-bottom: 1px solid var(--border);
-  }
-  .list-item:last-child { border-bottom: none; }
-  .list-icon {
-    width: 38px; height: 38px;
-    border-radius: 10px;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 18px;
-    flex-shrink: 0;
-  }
-  .list-info { flex: 1; min-width: 0; }
-  .list-name { font-size: 14px; font-weight: 600; }
-  .list-meta { font-size: 12px; color: var(--muted); margin-top: 2px; }
-  .badge {
-    padding: 3px 8px;
-    border-radius: 20px;
-    font-size: 11px;
-    font-weight: 600;
-    flex-shrink: 0;
-  }
-  .badge-green { background: rgba(46,204,113,0.15); color: var(--green); }
-  .badge-orange { background: rgba(243,156,18,0.15); color: var(--orange); }
-  .badge-red { background: rgba(231,76,60,0.15); color: var(--red); }
-  .badge-blue { background: rgba(79,142,247,0.15); color: var(--accent); }
+/* LIST ITEMS */
+.list-item { display: flex; align-items: center; gap: 11px; padding: 11px 0; border-bottom: 1px solid var(--border); }
+.list-item:last-child { border-bottom: none; }
+.list-icon { width: 36px; height: 36px; border-radius: 9px; display: flex; align-items: center; justify-content: center; font-size: 17px; flex-shrink: 0; }
+.list-info { flex: 1; min-width: 0; }
+.list-name { font-size: 14px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.list-meta { font-size: 11px; color: var(--muted); margin-top: 2px; }
 
-  /* CONTENT POSTS */
-  .post-card {
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: 14px;
-    padding: 14px;
-    margin-bottom: 10px;
-  }
-  .post-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px; }
-  .post-title { font-size: 14px; font-weight: 700; flex: 1; margin-right: 8px; }
-  .post-meta { font-size: 11px; color: var(--muted); margin-bottom: 8px; }
-  .post-actions { display: flex; gap: 8px; margin-top: 10px; }
-  .btn {
-    border: none; border-radius: 8px; padding: 7px 14px;
-    font-size: 12px; font-weight: 600; cursor: pointer; transition: opacity 0.2s;
-  }
-  .btn:hover { opacity: 0.85; }
-  .btn-primary { background: var(--accent); color: #fff; }
-  .btn-ghost { background: var(--border); color: var(--text); }
-  .btn-sm { padding: 5px 10px; font-size: 11px; }
-  .btn-danger { background: rgba(231,76,60,0.2); color: var(--red); }
+/* BADGES */
+.badge { padding: 3px 8px; border-radius: 20px; font-size: 11px; font-weight: 600; flex-shrink: 0; }
+.badge-green { background: rgba(46,204,113,.15); color: var(--green); }
+.badge-orange { background: rgba(243,156,18,.15); color: var(--orange); }
+.badge-red { background: rgba(231,76,60,.15); color: var(--red); }
+.badge-blue { background: rgba(79,142,247,.15); color: var(--accent); }
+.badge-purple { background: rgba(124,92,191,.15); color: var(--accent2); }
 
-  /* CHANNELS */
-  .channel-row {
-    display: flex; align-items: center; gap: 12px;
-    padding: 10px 0;
-    border-bottom: 1px solid var(--border);
-  }
-  .channel-row:last-child { border-bottom: none; }
-  .channel-icon {
-    width: 36px; height: 36px; border-radius: 10px;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 18px; flex-shrink: 0;
-  }
-  .toggle {
-    width: 42px; height: 24px;
-    background: var(--border);
-    border-radius: 12px;
-    position: relative;
-    cursor: pointer;
-    transition: background 0.2s;
-    flex-shrink: 0;
-  }
-  .toggle.on { background: var(--accent); }
-  .toggle::after {
-    content: '';
-    position: absolute;
-    width: 18px; height: 18px;
-    background: #fff;
-    border-radius: 50%;
-    top: 3px; left: 3px;
-    transition: transform 0.2s;
-  }
-  .toggle.on::after { transform: translateX(18px); }
+/* BUTTONS */
+.btn {
+  border: none; border-radius: 9px; padding: 8px 16px; font-size: 13px; font-weight: 600;
+  cursor: pointer; transition: opacity .2s; display: inline-flex; align-items: center; gap: 5px;
+}
+.btn:active { opacity: .75; }
+.btn-primary { background: var(--accent); color: #fff; }
+.btn-ghost { background: var(--border); color: var(--text); }
+.btn-success { background: rgba(46,204,113,.2); color: var(--green); }
+.btn-danger { background: rgba(231,76,60,.2); color: var(--red); }
+.btn-sm { padding: 5px 10px; font-size: 11px; border-radius: 7px; }
+.btn-full { width: 100%; justify-content: center; margin-top: 8px; }
 
-  /* ANALYTICS */
-  .chart-bar {
-    display: flex; align-items: center; gap: 10px; margin-bottom: 8px;
-  }
-  .chart-label { font-size: 12px; color: var(--muted); width: 60px; text-align: right; flex-shrink: 0; }
-  .chart-track { flex: 1; background: var(--border); border-radius: 4px; height: 8px; overflow: hidden; }
-  .chart-fill { height: 100%; border-radius: 4px; background: linear-gradient(90deg, var(--accent), var(--accent2)); }
-  .chart-val { font-size: 12px; font-weight: 600; width: 36px; text-align: right; flex-shrink: 0; }
+/* CONTENT POSTS */
+.post-card {
+  background: var(--card); border: 1px solid var(--border); border-radius: 14px;
+  padding: 14px; margin-bottom: 10px;
+}
+.post-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 6px; gap: 8px; }
+.post-title { font-size: 14px; font-weight: 700; flex: 1; }
+.post-meta { font-size: 11px; color: var(--muted); margin-bottom: 8px; }
+.post-body { font-size: 12px; color: var(--muted); line-height: 1.5; margin-bottom: 10px; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+.post-actions { display: flex; gap: 6px; flex-wrap: wrap; }
+.variant-btns { display: flex; gap: 5px; }
+.variant-btn {
+  width: 32px; height: 32px; border-radius: 8px; border: 1px solid var(--border);
+  background: transparent; color: var(--text); font-size: 12px; font-weight: 700;
+  cursor: pointer; transition: all .2s; display: flex; align-items: center; justify-content: center;
+}
+.variant-btn:hover { border-color: var(--accent); color: var(--accent); }
+.variant-btn.selected { background: var(--accent); color: #fff; border-color: var(--accent); }
 
-  /* SETTINGS */
-  .setting-row {
-    display: flex; align-items: center; gap: 12px; padding: 12px 0;
-    border-bottom: 1px solid var(--border);
-  }
-  .setting-row:last-child { border-bottom: none; }
-  .setting-icon { font-size: 20px; width: 28px; text-align: center; flex-shrink: 0; }
-  .setting-info { flex: 1; }
-  .setting-name { font-size: 14px; font-weight: 600; }
-  .setting-desc { font-size: 11px; color: var(--muted); margin-top: 2px; }
+/* TOGGLE */
+.toggle {
+  width: 42px; height: 24px; background: var(--border); border-radius: 12px;
+  position: relative; cursor: pointer; transition: background .25s; flex-shrink: 0;
+}
+.toggle.on { background: var(--accent); }
+.toggle::after {
+  content: ''; position: absolute; width: 18px; height: 18px;
+  background: #fff; border-radius: 50%; top: 3px; left: 3px; transition: transform .25s;
+}
+.toggle.on::after { transform: translateX(18px); }
 
-  /* FLOATING ACTION */
-  .fab {
-    position: fixed;
-    bottom: 20px; right: 16px;
-    width: 52px; height: 52px;
-    border-radius: 50%;
-    background: linear-gradient(135deg, var(--accent), var(--accent2));
-    border: none;
-    color: #fff;
-    font-size: 24px;
-    cursor: pointer;
-    box-shadow: 0 4px 20px rgba(79,142,247,0.4);
-    display: flex; align-items: center; justify-content: center;
-    transition: transform 0.2s;
-    z-index: 200;
-  }
-  .fab:active { transform: scale(0.92); }
+/* CHANNEL ROWS */
+.channel-row { display: flex; align-items: center; gap: 11px; padding: 10px 0; border-bottom: 1px solid var(--border); }
+.channel-row:last-child { border-bottom: none; }
 
-  /* EMPTY STATE */
-  .empty {
-    text-align: center;
-    padding: 40px 20px;
-    color: var(--muted);
-  }
-  .empty-icon { font-size: 48px; margin-bottom: 12px; }
-  .empty-text { font-size: 14px; }
+/* CHARTS */
+.chart-bar { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+.chart-label { font-size: 12px; color: var(--muted); width: 64px; text-align: right; flex-shrink: 0; }
+.chart-track { flex: 1; background: var(--border); border-radius: 4px; height: 8px; overflow: hidden; }
+.chart-fill { height: 100%; border-radius: 4px; background: linear-gradient(90deg, var(--accent), var(--accent2)); transition: width .6s ease; }
+.chart-val { font-size: 12px; font-weight: 600; width: 28px; text-align: right; flex-shrink: 0; }
 
-  /* SECTION DIVIDER */
-  .section-label {
-    font-size: 11px; font-weight: 700;
-    color: var(--muted);
-    text-transform: uppercase;
-    letter-spacing: 0.7px;
-    margin: 16px 0 8px;
-    padding-left: 4px;
-  }
+/* SETTING ROWS */
+.setting-row { display: flex; align-items: center; gap: 11px; padding: 12px 0; border-bottom: 1px solid var(--border); }
+.setting-row:last-child { border-bottom: none; }
+.setting-icon { font-size: 20px; width: 26px; text-align: center; flex-shrink: 0; }
+.setting-info { flex: 1; }
+.setting-name { font-size: 14px; font-weight: 600; }
+.setting-desc { font-size: 11px; color: var(--muted); margin-top: 2px; }
 
-  /* TOAST */
-  .toast {
-    position: fixed;
-    top: 70px; left: 50%; transform: translateX(-50%);
-    background: #2ecc71;
-    color: #fff;
-    padding: 10px 20px;
-    border-radius: 20px;
-    font-size: 13px; font-weight: 600;
-    opacity: 0;
-    transition: opacity 0.3s;
-    z-index: 999;
-    white-space: nowrap;
-  }
-  .toast.show { opacity: 1; }
+/* INPUT */
+.input-row { display: flex; gap: 8px; margin-bottom: 8px; }
+input[type="text"], textarea {
+  flex: 1; background: var(--bg); border: 1px solid var(--border); border-radius: 9px;
+  padding: 9px 12px; color: var(--text); font-size: 13px; outline: none;
+  font-family: inherit; transition: border-color .2s;
+}
+input[type="text"]:focus, textarea:focus { border-color: var(--accent); }
+textarea { resize: none; height: 80px; }
+
+/* TOAST */
+.toast {
+  position: fixed; top: 64px; left: 50%; transform: translateX(-50%) translateY(-8px);
+  background: var(--card); border: 1px solid var(--border);
+  color: var(--text); padding: 9px 18px; border-radius: 20px;
+  font-size: 13px; font-weight: 500; opacity: 0; pointer-events: none;
+  transition: all .25s; z-index: 999; white-space: nowrap;
+  box-shadow: 0 4px 20px rgba(0,0,0,.4);
+}
+.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+.toast.success { border-color: var(--green); color: var(--green); }
+.toast.error { border-color: var(--red); color: var(--red); }
+
+/* LOADING */
+.skeleton { background: linear-gradient(90deg, var(--border) 25%, var(--card) 50%, var(--border) 75%); background-size: 200% 100%; animation: shimmer 1.4s infinite; border-radius: 8px; }
+@keyframes shimmer { 0%{background-position:200% 0} 100%{background-position:-200% 0} }
+.loading-row { height: 52px; margin-bottom: 8px; }
+
+/* MODAL */
+.modal-overlay {
+  position: fixed; inset: 0; background: rgba(0,0,0,.7); z-index: 200;
+  display: flex; align-items: flex-end; opacity: 0; pointer-events: none;
+  transition: opacity .25s;
+}
+.modal-overlay.open { opacity: 1; pointer-events: all; }
+.modal {
+  background: var(--card); border-top-left-radius: 20px; border-top-right-radius: 20px;
+  padding: 20px; width: 100%; transform: translateY(100%); transition: transform .3s ease;
+  border-top: 1px solid var(--border);
+}
+.modal-overlay.open .modal { transform: translateY(0); }
+.modal-title { font-size: 16px; font-weight: 700; margin-bottom: 14px; }
+
+/* EMPTY */
+.empty { text-align: center; padding: 40px 20px; color: var(--muted); }
+.empty-icon { font-size: 42px; margin-bottom: 10px; }
+
+/* RECENT LOG */
+.log-item { font-size: 11px; color: var(--muted); padding: 5px 0; border-bottom: 1px solid var(--border); font-family: monospace; }
+.log-item:last-child { border-bottom: none; }
+.log-item .log-time { color: var(--accent); margin-right: 6px; }
 </style>
 </head>
 <body>
 
 <div id="toast" class="toast"></div>
 
+<!-- GENERATE MODAL -->
+<div class="modal-overlay" id="gen-modal" onclick="closeModal('gen-modal')">
+  <div class="modal" onclick="event.stopPropagation()">
+    <div class="modal-title">🎨 Генерация изображения</div>
+    <textarea id="gen-prompt" placeholder="Опиши изображение для kie.ai GPT-Image-2...&#10;Пример: баня из бруса зимой, снег, огни"></textarea>
+    <div style="margin-top:10px;display:flex;gap:8px">
+      <button class="btn btn-ghost btn-full" onclick="closeModal('gen-modal')" style="flex:1">Отмена</button>
+      <button class="btn btn-primary btn-full" onclick="doGenerate()" style="flex:2">Сгенерировать →</button>
+    </div>
+  </div>
+</div>
+
+<!-- PUBLISH MODAL -->
+<div class="modal-overlay" id="pub-modal" onclick="closeModal('pub-modal')">
+  <div class="modal" onclick="event.stopPropagation()">
+    <div class="modal-title">📤 Публикация во все каналы</div>
+    <input type="text" id="pub-text" placeholder="Текст поста...">
+    <div style="margin-top:8px">
+      <input type="text" id="pub-photo" placeholder="Путь к фото (необязательно)">
+    </div>
+    <div style="margin-top:10px;display:flex;gap:8px">
+      <button class="btn btn-ghost" onclick="closeModal('pub-modal')" style="flex:1">Отмена</button>
+      <button class="btn btn-primary" onclick="doPublish()" style="flex:2">Опубликовать →</button>
+    </div>
+  </div>
+</div>
+
 <!-- HEADER -->
 <div class="header">
-  <div class="header-logo">S</div>
+  <div class="logo">S</div>
   <div class="header-info">
     <div class="header-title">SEDOM Admin</div>
     <div class="header-sub" id="user-name">Загрузка...</div>
   </div>
-  <div class="status-dot" id="bot-status"></div>
+  <div class="header-actions">
+    <button class="icon-btn" onclick="refreshAll()" title="Обновить">↻</button>
+    <button class="icon-btn" onclick="expandApp()" title="Развернуть">⛶</button>
+    <div class="dot" id="bot-dot"></div>
+  </div>
 </div>
 
 <!-- NAV -->
 <div class="nav">
-  <button class="nav-btn active" onclick="showPage('dashboard')" id="nav-dashboard">📊 Дашборд</button>
-  <button class="nav-btn" onclick="showPage('content')" id="nav-content">✏️ Контент</button>
-  <button class="nav-btn" onclick="showPage('channels')" id="nav-channels">📡 Каналы</button>
-  <button class="nav-btn" onclick="showPage('analytics')" id="nav-analytics">📈 Аналитика</button>
-  <button class="nav-btn" onclick="showPage('settings')" id="nav-settings">⚙️ Настройки</button>
+  <button class="nav-btn active" id="nav-dashboard" onclick="showPage('dashboard')">📊 Дашборд</button>
+  <button class="nav-btn" id="nav-content" onclick="showPage('content')">✏️ Контент</button>
+  <button class="nav-btn" id="nav-channels" onclick="showPage('channels')">📡 Каналы</button>
+  <button class="nav-btn" id="nav-analytics" onclick="showPage('analytics')">📈 Аналитика</button>
+  <button class="nav-btn" id="nav-settings" onclick="showPage('settings')">⚙️ Настройки</button>
 </div>
 
-<!-- DASHBOARD -->
+<!-- ══════════════════════ DASHBOARD ══════════════════════ -->
 <div class="page active" id="page-dashboard">
   <div class="stat-grid">
-    <div class="stat-item">
-      <div class="stat-value" id="stat-posts">—</div>
-      <div class="stat-label">Постов сегодня</div>
+    <div class="stat-item"><div class="stat-value" id="st-posts">…</div><div class="stat-label">Постов сегодня</div></div>
+    <div class="stat-item"><div class="stat-value" id="st-channels">…</div><div class="stat-label">Каналов</div></div>
+    <div class="stat-item"><div class="stat-value" id="st-pending" style="color:var(--orange)">…</div><div class="stat-label">На апруве</div></div>
+    <div class="stat-item"><div class="stat-value" id="st-queue">…</div><div class="stat-label">В очереди</div></div>
+  </div>
+
+  <div class="section-label">Интеграции</div>
+  <div class="card" id="integrations-list">
+    <div class="list-item">
+      <div class="list-icon" style="background:rgba(79,142,247,.15)">💬</div>
+      <div class="list-info"><div class="list-name">Telegram</div><div class="list-meta">@Maybe5s_bot</div></div>
+      <span class="badge badge-green">Онлайн</span>
     </div>
-    <div class="stat-item">
-      <div class="stat-value" id="stat-channels">—</div>
-      <div class="stat-label">Каналов активно</div>
+    <div class="list-item">
+      <div class="list-icon" style="background:rgba(255,140,0,.15)">🅼</div>
+      <div class="list-info"><div class="list-name">MAX</div><div class="list-meta">platform-api.max.ru</div></div>
+      <span class="badge badge-green">Онлайн</span>
     </div>
-    <div class="stat-item">
-      <div class="stat-value" id="stat-pending">—</div>
-      <div class="stat-label">Ожидают апрув</div>
+    <div class="list-item">
+      <div class="list-icon" style="background:rgba(252,88,0,.15)">🟠</div>
+      <div class="list-info"><div class="list-name">Дзен RSS</div><div class="list-meta">Автопубликация</div></div>
+      <span class="badge badge-green">Онлайн</span>
     </div>
-    <div class="stat-item">
-      <div class="stat-value" id="stat-queue">—</div>
-      <div class="stat-label">В очереди</div>
+    <div class="list-item">
+      <div class="list-icon" style="background:rgba(231,76,60,.15)">🔴</div>
+      <div class="list-info"><div class="list-name">Авито CDP</div><div class="list-meta">Chrome DevTools Protocol</div></div>
+      <span class="badge badge-orange" id="avito-badge">Настройка</span>
+    </div>
+    <div class="list-item">
+      <div class="list-icon" style="background:rgba(124,92,191,.15)">🎨</div>
+      <div class="list-info"><div class="list-name">kie.ai GPT-Image-2</div><div class="list-meta">Генерация картинок</div></div>
+      <span class="badge badge-green">Онлайн</span>
+    </div>
+    <div class="list-item">
+      <div class="list-icon" style="background:rgba(79,142,247,.15)">🤖</div>
+      <div class="list-info"><div class="list-name">Admin Mini App</div><div class="list-meta">@PnzDNK_bot</div></div>
+      <span class="badge badge-green">Онлайн</span>
     </div>
   </div>
 
-  <div class="section-label">Активные интеграции</div>
+  <div class="section-label">Быстрые действия</div>
   <div class="card">
-    <div class="list-item">
-      <div class="list-icon" style="background:rgba(79,142,247,0.15)">💬</div>
-      <div class="list-info">
-        <div class="list-name">Telegram каналы</div>
-        <div class="list-meta">@sedom_bany • @denis_suvorov</div>
-      </div>
-      <span class="badge badge-green">Онлайн</span>
-    </div>
-    <div class="list-item">
-      <div class="list-icon" style="background:rgba(255,140,0,0.15)">🅼</div>
-      <div class="list-info">
-        <div class="list-name">MAX</div>
-        <div class="list-meta">platform-api.max.ru</div>
-      </div>
-      <span class="badge badge-green">Онлайн</span>
-    </div>
-    <div class="list-item">
-      <div class="list-icon" style="background:rgba(252,88,0,0.15)">🟠</div>
-      <div class="list-info">
-        <div class="list-name">Дзен RSS</div>
-        <div class="list-meta">dzen_rss.py</div>
-      </div>
-      <span class="badge badge-green">Онлайн</span>
-    </div>
-    <div class="list-item">
-      <div class="list-icon" style="background:rgba(231,76,60,0.15)">🅰️</div>
-      <div class="list-info">
-        <div class="list-name">Авито (CDP)</div>
-        <div class="list-meta">Подключение через Chrome</div>
-      </div>
-      <span class="badge badge-orange">Настройка</span>
-    </div>
-    <div class="list-item">
-      <div class="list-icon" style="background:rgba(124,92,191,0.15)">🎨</div>
-      <div class="list-info">
-        <div class="list-name">kie.ai GPT-Image-2</div>
-        <div class="list-meta">Генерация изображений</div>
-      </div>
-      <span class="badge badge-green">Онлайн</span>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+      <button class="btn btn-primary" onclick="openModal('gen-modal')">🎨 Генерация</button>
+      <button class="btn btn-ghost" onclick="openModal('pub-modal')">📤 Публикация</button>
+      <button class="btn btn-ghost" onclick="sendCmd('CONTENTSTATUS')">📊 Статус</button>
+      <button class="btn btn-ghost" onclick="sendCmd('CONTENTSEED')">🔄 Пересеять</button>
     </div>
   </div>
 
-  <div class="section-label">Последние действия</div>
-  <div class="card" id="recent-actions">
-    <div class="empty">
-      <div class="empty-icon">🕐</div>
-      <div class="empty-text">История загружается...</div>
-    </div>
+  <div class="section-label">Лог активности</div>
+  <div class="card" id="log-list">
+    <div class="skeleton loading-row"></div>
+    <div class="skeleton loading-row"></div>
   </div>
 </div>
 
-<!-- CONTENT -->
+<!-- ══════════════════════ CONTENT ══════════════════════ -->
 <div class="page" id="page-content">
-  <div class="section-label">Ожидают утверждения</div>
-  <div id="approval-list">
-    <div class="post-card">
-      <div class="post-header">
-        <div class="post-title">Знакомство с Dom SE</div>
-        <span class="badge badge-orange">Апрув</span>
-      </div>
-      <div class="post-meta">Telegram + MAX · 16 июня · 12:00</div>
-      <div style="font-size:13px;color:var(--muted);line-height:1.5">
-        Пост-знакомство с проектом Дениса Суворова. Три варианта текста (A/B/C).
-      </div>
-      <div class="post-actions">
-        <button class="btn btn-primary btn-sm" onclick="sendCmd('APPROVALS:1')">Посмотреть</button>
-        <button class="btn btn-ghost btn-sm" onclick="sendCmd('CHOOSE:1:A')">A</button>
-        <button class="btn btn-ghost btn-sm" onclick="sendCmd('CHOOSE:1:B')">B</button>
-        <button class="btn btn-ghost btn-sm" onclick="sendCmd('CHOOSE:1:C')">C</button>
-      </div>
-    </div>
-    <div class="post-card">
-      <div class="post-header">
-        <div class="post-title">3 ошибки подрядчика</div>
-        <span class="badge badge-orange">Апрув</span>
-      </div>
-      <div class="post-meta">Telegram + Дзен · 20 июня · 11:00</div>
-      <div style="font-size:13px;color:var(--muted);line-height:1.5">
-        Карусель с разбором частых ошибок при выборе строителей.
-      </div>
-      <div class="post-actions">
-        <button class="btn btn-primary btn-sm" onclick="sendCmd('APPROVALS:3')">Посмотреть</button>
-        <button class="btn btn-ghost btn-sm" onclick="sendCmd('CHOOSE:3:A')">A</button>
-        <button class="btn btn-ghost btn-sm" onclick="sendCmd('CHOOSE:3:B')">B</button>
-        <button class="btn btn-ghost btn-sm" onclick="sendCmd('CHOOSE:3:C')">C</button>
-      </div>
-    </div>
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+    <div class="section-label" style="margin:0">Посты на апрув</div>
+    <button class="btn btn-sm btn-ghost" onclick="loadContent()">↻ Обновить</button>
+  </div>
+
+  <div id="content-list">
+    <div class="skeleton loading-row"></div>
+    <div class="skeleton loading-row"></div>
+    <div class="skeleton loading-row"></div>
   </div>
 
   <div class="section-label">Генерация контента</div>
   <div class="card">
     <div class="list-item">
-      <div class="list-icon" style="background:rgba(124,92,191,0.15)">🎨</div>
-      <div class="list-info">
-        <div class="list-name">Сгенерировать изображение</div>
-        <div class="list-meta">GPT-Image-2 через kie.ai</div>
-      </div>
-      <button class="btn btn-ghost btn-sm" onclick="openImageGen()">→</button>
+      <div class="list-icon" style="background:rgba(124,92,191,.15)">🎨</div>
+      <div class="list-info"><div class="list-name">Новое изображение</div><div class="list-meta">GPT-Image-2 via kie.ai</div></div>
+      <button class="btn btn-ghost btn-sm" onclick="openModal('gen-modal')">→</button>
     </div>
     <div class="list-item">
-      <div class="list-icon" style="background:rgba(79,142,247,0.15)">📝</div>
-      <div class="list-info">
-        <div class="list-name">Контент-план</div>
-        <div class="list-meta">CONTENTSEED — пересеять базу</div>
-      </div>
-      <button class="btn btn-ghost btn-sm" onclick="sendCmd('CONTENTSTATUS')">Статус</button>
+      <div class="list-icon" style="background:rgba(79,142,247,.15)">✍️</div>
+      <div class="list-info"><div class="list-name">Пост в MAX</div><div class="list-meta">Отправить текст в канал</div></div>
+      <button class="btn btn-ghost btn-sm" onclick="openModal('pub-modal')">→</button>
+    </div>
+    <div class="list-item">
+      <div class="list-icon" style="background:rgba(252,88,0,.15)">🟠</div>
+      <div class="list-info"><div class="list-name">Дзен пост</div><div class="list-meta">DZEN:заголовок|текст|фото</div></div>
+      <button class="btn btn-ghost btn-sm" onclick="openDzen()">→</button>
     </div>
   </div>
 </div>
 
-<!-- CHANNELS -->
+<!-- ══════════════════════ CHANNELS ══════════════════════ -->
 <div class="page" id="page-channels">
-  <div class="section-label">Telegram</div>
-  <div class="card">
-    <div class="channel-row">
-      <div class="channel-icon" style="background:rgba(79,142,247,0.15)">💬</div>
-      <div style="flex:1">
-        <div class="list-name">SEDOM Бани</div>
-        <div class="list-meta">@sedom_bany</div>
-      </div>
-      <div class="toggle on" onclick="this.classList.toggle('on')"></div>
-    </div>
-    <div class="channel-row">
-      <div class="channel-icon" style="background:rgba(79,142,247,0.15)">💬</div>
-      <div style="flex:1">
-        <div class="list-name">Денис Суворов</div>
-        <div class="list-meta">@denis_suvorov</div>
-      </div>
-      <div class="toggle on" onclick="this.classList.toggle('on')"></div>
-    </div>
+  <div id="channels-list">
+    <div class="skeleton loading-row"></div>
+    <div class="skeleton loading-row"></div>
+    <div class="skeleton loading-row"></div>
   </div>
 
-  <div class="section-label">MAX</div>
+  <div class="section-label">Добавить канал</div>
   <div class="card">
-    <div class="channel-row">
-      <div class="channel-icon" style="background:rgba(255,140,0,0.15)">🅼</div>
-      <div style="flex:1">
-        <div class="list-name">Тест</div>
-        <div class="list-meta">@id580308579385_bot</div>
-      </div>
-      <div class="toggle on" onclick="this.classList.toggle('on')"></div>
+    <div class="input-row">
+      <input type="text" id="ch-name" placeholder="Название">
+    </div>
+    <div class="input-row">
+      <input type="text" id="ch-username" placeholder="@username или chat_id">
+      <select id="ch-platform" style="background:var(--bg);border:1px solid var(--border);border-radius:9px;padding:9px;color:var(--text);font-size:13px;flex-shrink:0">
+        <option value="telegram">Telegram</option>
+        <option value="max">MAX</option>
+        <option value="vk">ВК</option>
+      </select>
+    </div>
+    <div class="input-row">
+      <select id="ch-brand" style="background:var(--bg);border:1px solid var(--border);border-radius:9px;padding:9px;color:var(--text);font-size:13px;flex:1">
+        <option value="SEDOM">SEDOM</option>
+        <option value="DOMSE">Денис Суворов</option>
+      </select>
+      <button class="btn btn-primary" onclick="addChannel()">Добавить</button>
     </div>
   </div>
-
-  <div class="section-label">Другие площадки</div>
-  <div class="card">
-    <div class="channel-row">
-      <div class="channel-icon" style="background:rgba(252,88,0,0.15)">🟠</div>
-      <div style="flex:1">
-        <div class="list-name">Яндекс Дзен</div>
-        <div class="list-meta">RSS автопубликация</div>
-      </div>
-      <div class="toggle on" onclick="this.classList.toggle('on')"></div>
-    </div>
-    <div class="channel-row">
-      <div class="channel-icon" style="background:rgba(231,76,60,0.15)">🔴</div>
-      <div style="flex:1">
-        <div class="list-name">Авито</div>
-        <div class="list-meta">Chrome CDP</div>
-      </div>
-      <div class="toggle" onclick="this.classList.toggle('on')"></div>
-    </div>
-  </div>
-
-  <button class="btn btn-primary" style="width:100%;margin-top:8px" onclick="sendCmd('ADDCHANNEL:')">
-    + Добавить канал
-  </button>
 </div>
 
-<!-- ANALYTICS -->
+<!-- ══════════════════════ ANALYTICS ══════════════════════ -->
 <div class="page" id="page-analytics">
   <div class="stat-grid">
-    <div class="stat-item">
-      <div class="stat-value" style="color:var(--green)">↑12%</div>
-      <div class="stat-label">Охват (7д)</div>
-    </div>
-    <div class="stat-item">
-      <div class="stat-value" style="color:var(--accent)">4.8%</div>
-      <div class="stat-label">Вовлечённость</div>
-    </div>
+    <div class="stat-item"><div class="stat-value" style="color:var(--green)">↑</div><div class="stat-label">Охват 7д</div></div>
+    <div class="stat-item"><div class="stat-value" id="an-incoming">…</div><div class="stat-label">Входящих 24ч</div></div>
+    <div class="stat-item"><div class="stat-value" id="an-auto">…</div><div class="stat-label">Автоответов</div></div>
+    <div class="stat-item"><div class="stat-value" style="color:var(--green)">4.8%</div><div class="stat-label">Вовлечённость</div></div>
   </div>
 
   <div class="section-label">Публикации по площадкам</div>
   <div class="card">
-    <div class="chart-bar">
-      <div class="chart-label">Telegram</div>
-      <div class="chart-track"><div class="chart-fill" style="width:85%"></div></div>
-      <div class="chart-val">17</div>
-    </div>
-    <div class="chart-bar">
-      <div class="chart-label">MAX</div>
-      <div class="chart-track"><div class="chart-fill" style="width:60%"></div></div>
-      <div class="chart-val">12</div>
-    </div>
-    <div class="chart-bar">
-      <div class="chart-label">Дзен</div>
-      <div class="chart-track"><div class="chart-fill" style="width:35%"></div></div>
-      <div class="chart-val">7</div>
-    </div>
-    <div class="chart-bar">
-      <div class="chart-label">Авито</div>
-      <div class="chart-track"><div class="chart-fill" style="width:15%"></div></div>
-      <div class="chart-val">3</div>
-    </div>
+    <div class="chart-bar"><div class="chart-label">Telegram</div><div class="chart-track"><div class="chart-fill" id="ch-tg" style="width:0%"></div></div><div class="chart-val" id="cv-tg">…</div></div>
+    <div class="chart-bar"><div class="chart-label">MAX</div><div class="chart-track"><div class="chart-fill" id="ch-max" style="width:0%"></div></div><div class="chart-val" id="cv-max">…</div></div>
+    <div class="chart-bar"><div class="chart-label">Дзен</div><div class="chart-track"><div class="chart-fill" id="ch-dzen" style="width:0%"></div></div><div class="chart-val" id="cv-dzen">…</div></div>
+    <div class="chart-bar"><div class="chart-label">Авито</div><div class="chart-track"><div class="chart-fill" id="ch-avito" style="width:0%"></div></div><div class="chart-val" id="cv-avito">…</div></div>
   </div>
 
-  <div class="section-label">Ежедневный дайджест</div>
+  <div class="section-label">Дайджест 24ч</div>
   <div class="card">
     <div class="list-item">
-      <div class="list-icon" style="background:rgba(79,142,247,0.15)">📬</div>
-      <div class="list-info">
-        <div class="list-name">Входящих сообщений</div>
-        <div class="list-meta">За последние 24 часа</div>
-      </div>
-      <div style="font-size:20px;font-weight:800;color:var(--accent)" id="stat-incoming">—</div>
+      <div class="list-icon" style="background:rgba(79,142,247,.15)">📬</div>
+      <div class="list-info"><div class="list-name">Входящих от клиентов</div><div class="list-meta">Боту написали</div></div>
+      <div style="font-size:22px;font-weight:800;color:var(--accent)" id="an-in2">…</div>
     </div>
     <div class="list-item">
-      <div class="list-icon" style="background:rgba(46,204,113,0.15)">🤖</div>
-      <div class="list-info">
-        <div class="list-name">Автоответов</div>
-        <div class="list-meta">Claude отвечал клиентам</div>
-      </div>
-      <div style="font-size:20px;font-weight:800;color:var(--green)" id="stat-auto">—</div>
+      <div class="list-icon" style="background:rgba(46,204,113,.15)">🤖</div>
+      <div class="list-info"><div class="list-name">Автоответов</div><div class="list-meta">Claude ответил</div></div>
+      <div style="font-size:22px;font-weight:800;color:var(--green)" id="an-auto2">…</div>
     </div>
   </div>
 </div>
 
-<!-- SETTINGS -->
+<!-- ══════════════════════ SETTINGS ══════════════════════ -->
 <div class="page" id="page-settings">
   <div class="card">
     <div class="card-title">Бот</div>
     <div class="setting-row">
       <div class="setting-icon">🤖</div>
-      <div class="setting-info">
-        <div class="setting-name">@Maybe5s_bot</div>
-        <div class="setting-desc">Основной бот управления</div>
-      </div>
+      <div class="setting-info"><div class="setting-name">@Maybe5s_bot</div><div class="setting-desc">Основной бот управления</div></div>
       <span class="badge badge-green">Онлайн</span>
     </div>
     <div class="setting-row">
-      <div class="setting-icon">🔑</div>
-      <div class="setting-info">
-        <div class="setting-name">API ключи</div>
-        <div class="setting-desc">kie.ai, Anthropic, MAX, OpenRouter</div>
-      </div>
-      <button class="btn btn-ghost btn-sm" onclick="toast('Заполни в .env')">→</button>
+      <div class="setting-icon">🔐</div>
+      <div class="setting-info"><div class="setting-name">Mini App API</div><div class="setting-desc" id="api-url-display">Не запущен</div></div>
+      <span class="badge badge-orange" id="api-status-badge">Офлайн</span>
     </div>
     <div class="setting-row">
       <div class="setting-icon">📅</div>
-      <div class="setting-info">
-        <div class="setting-name">Расписание</div>
-        <div class="setting-desc">Автопостинг по плану</div>
-      </div>
-      <div class="toggle on" onclick="this.classList.toggle('on')"></div>
+      <div class="setting-info"><div class="setting-name">Автопостинг</div><div class="setting-desc">По расписанию из content_posts</div></div>
+      <div class="toggle on"></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">API ключи (.env)</div>
+    <div class="setting-row">
+      <div class="setting-icon">🎨</div>
+      <div class="setting-info"><div class="setting-name">kie.ai</div><div class="setting-desc" id="kieai-status">Проверка...</div></div>
+    </div>
+    <div class="setting-row">
+      <div class="setting-icon">🧠</div>
+      <div class="setting-info"><div class="setting-name">Anthropic</div><div class="setting-desc" id="anthropic-status">Проверка...</div></div>
+    </div>
+    <div class="setting-row">
+      <div class="setting-icon">🅼</div>
+      <div class="setting-info"><div class="setting-name">MAX Token</div><div class="setting-desc" id="max-status">Проверка...</div></div>
     </div>
   </div>
 
@@ -586,115 +457,407 @@
     <div class="card-title">Бренды</div>
     <div class="setting-row">
       <div class="setting-icon">🏠</div>
-      <div class="setting-info">
-        <div class="setting-name">SEDOM</div>
-        <div class="setting-desc">Модульные бани и дома</div>
-      </div>
+      <div class="setting-info"><div class="setting-name">SEDOM</div><div class="setting-desc">Модульные бани и дома</div></div>
       <span class="badge badge-blue">Активен</span>
     </div>
     <div class="setting-row">
       <div class="setting-icon">🪟</div>
-      <div class="setting-info">
-        <div class="setting-name">Денис Суворов</div>
-        <div class="setting-desc">Остекление Пенза</div>
-      </div>
+      <div class="setting-info"><div class="setting-name">Денис Суворов</div><div class="setting-desc">Остекление Пенза</div></div>
       <span class="badge badge-blue">Активен</span>
     </div>
   </div>
 
   <div class="card">
-    <div class="card-title">Быстрые команды</div>
+    <div class="card-title">Прямые команды боту</div>
     <div class="setting-row">
       <div class="setting-icon">📊</div>
-      <div class="setting-info">
-        <div class="setting-name">Статус контента</div>
-        <div class="setting-desc">CONTENTSTATUS</div>
-      </div>
-      <button class="btn btn-ghost btn-sm" onclick="sendCmd('CONTENTSTATUS')">Запуск</button>
+      <div class="setting-info"><div class="setting-name">Статус контента</div><div class="setting-desc">CONTENTSTATUS</div></div>
+      <button class="btn btn-ghost btn-sm" onclick="sendCmd('CONTENTSTATUS')">▶</button>
     </div>
     <div class="setting-row">
       <div class="setting-icon">🔄</div>
-      <div class="setting-info">
-        <div class="setting-name">Пересеять посты</div>
-        <div class="setting-desc">CONTENTSEED</div>
-      </div>
-      <button class="btn btn-ghost btn-sm" onclick="sendCmd('CONTENTSEED')">Запуск</button>
+      <div class="setting-info"><div class="setting-name">Пересеять посты</div><div class="setting-desc">CONTENTSEED</div></div>
+      <button class="btn btn-ghost btn-sm" onclick="sendCmd('CONTENTSEED')">▶</button>
+    </div>
+    <div class="setting-row">
+      <div class="setting-icon">🔧</div>
+      <div class="setting-info"><div class="setting-name">API URL</div><div class="setting-desc">Адрес Mini App API</div></div>
+      <button class="btn btn-ghost btn-sm" onclick="changeApiUrl()">✎</button>
     </div>
   </div>
 </div>
 
-<!-- FAB -->
-<button class="fab" id="fab" onclick="fabAction()">+</button>
-
 <script>
+// ── CONFIG ──────────────────────────────────────────────────────────────────
 const tg = window.Telegram?.WebApp;
+let API = localStorage.getItem('miniapp_api') || '';
+let apiOnline = false;
+let selectedVariants = {};
 
+// ── INIT ────────────────────────────────────────────────────────────────────
 function init() {
   if (tg) {
     tg.ready();
     tg.expand();
-    // Apply Telegram theme colors if available
-    if (tg.themeParams?.bg_color) {
-      document.documentElement.style.setProperty('--bg', tg.themeParams.bg_color);
-    }
+    try { tg.requestFullscreen?.(); } catch(e) {}
+    tg.setBackgroundColor?.('#0e1117');
+    tg.setHeaderColor?.('#161b25');
     const user = tg.initDataUnsafe?.user;
-    if (user) {
-      document.getElementById('user-name').textContent = `${user.first_name || ''} ${user.last_name || ''}`.trim() || 'Илья';
-    } else {
-      document.getElementById('user-name').textContent = 'Илья';
-    }
+    document.getElementById('user-name').textContent =
+      user ? (user.first_name || 'Илья') : 'Preview Mode';
   } else {
-    document.getElementById('user-name').textContent = 'Preview Mode';
+    document.getElementById('user-name').textContent = 'Dev Mode';
   }
+  checkApi();
+}
+
+// ── API ─────────────────────────────────────────────────────────────────────
+async function apiFetch(path, opts = {}) {
+  if (!API) throw new Error('API не настроен');
+  const res = await fetch(API + path, {
+    headers: { 'Content-Type': 'application/json', 'X-Telegram-Init-Data': tg?.initData || '' },
+    ...opts
+  });
+  return res.json();
+}
+
+async function checkApi() {
+  if (!API) {
+    setApiStatus(false);
+    return;
+  }
+  try {
+    const d = await apiFetch('/api/ping');
+    apiOnline = d.ok === true;
+    setApiStatus(apiOnline);
+    if (apiOnline) refreshAll();
+  } catch(e) {
+    setApiStatus(false);
+  }
+}
+
+function setApiStatus(online) {
+  apiOnline = online;
+  const dot = document.getElementById('bot-dot');
+  const badge = document.getElementById('api-status-badge');
+  const urlEl = document.getElementById('api-url-display');
+  if (dot) dot.className = 'dot' + (online ? '' : ' off');
+  if (badge) { badge.textContent = online ? 'Онлайн' : 'Офлайн'; badge.className = 'badge ' + (online ? 'badge-green' : 'badge-red'); }
+  if (urlEl) urlEl.textContent = API || 'Не настроен — нажми ✎ и введи URL';
+}
+
+async function sendCmd(cmd) {
+  if (!apiOnline) { toast('Сначала запусти API (start_miniapp.sh)', 'error'); return; }
+  try {
+    const d = await apiFetch('/api/cmd', { method: 'POST', body: JSON.stringify({ cmd }) });
+    toast(d.ok ? '✓ Отправлено: ' + cmd.split(':')[0] : '✗ ' + d.error, d.ok ? 'success' : 'error');
+  } catch(e) { toast('Ошибка: ' + e.message, 'error'); }
+}
+
+// ── REFRESH ──────────────────────────────────────────────────────────────────
+async function refreshAll() {
   loadStats();
+  const page = document.querySelector('.page.active')?.id?.replace('page-', '');
+  if (page === 'content') loadContent();
+  else if (page === 'channels') loadChannels();
+  else if (page === 'analytics') loadAnalytics();
+  else if (page === 'dashboard') { loadLog(); loadContent(); loadChannels(); }
 }
 
-function loadStats() {
-  // Static demo data — will be replaced with real API calls
-  document.getElementById('stat-posts').textContent = '3';
-  document.getElementById('stat-channels').textContent = '5';
-  document.getElementById('stat-pending').textContent = '4';
-  document.getElementById('stat-queue').textContent = '2';
-  document.getElementById('stat-incoming').textContent = '12';
-  document.getElementById('stat-auto').textContent = '7';
+// ── STATS ────────────────────────────────────────────────────────────────────
+async function loadStats() {
+  if (!apiOnline) { setStatsDemo(); return; }
+  try {
+    const d = await apiFetch('/api/stats');
+    document.getElementById('st-posts').textContent = d.posts_today ?? '—';
+    document.getElementById('st-channels').textContent = d.active_channels ?? '—';
+    document.getElementById('st-pending').textContent = d.pending_approvals ?? '—';
+    document.getElementById('st-queue').textContent = d.queue_count ?? '—';
+    if (d.incoming_24h !== undefined) {
+      document.getElementById('an-incoming').textContent = d.incoming_24h;
+      document.getElementById('an-auto').textContent = d.auto_replies;
+      document.getElementById('an-in2').textContent = d.incoming_24h;
+      document.getElementById('an-auto2').textContent = d.auto_replies;
+    }
+  } catch(e) { setStatsDemo(); }
 }
 
+function setStatsDemo() {
+  ['st-posts','st-channels','st-pending','st-queue','an-incoming','an-auto','an-in2','an-auto2']
+    .forEach(id => { const el = document.getElementById(id); if(el) el.textContent = '—'; });
+}
+
+// ── LOG ──────────────────────────────────────────────────────────────────────
+function loadLog() {
+  const el = document.getElementById('log-list');
+  if (!apiOnline) {
+    el.innerHTML = '<div class="empty"><div class="empty-icon">💤</div><div class="empty-text">Запусти API для просмотра лога</div></div>';
+    return;
+  }
+  el.innerHTML = '<div class="log-item"><span class="log-time">сейчас</span>Admin Panel подключён</div>' +
+    '<div class="log-item"><span class="log-time">—</span>Данные загружены из БД</div>';
+}
+
+// ── CONTENT ──────────────────────────────────────────────────────────────────
+async function loadContent() {
+  const el = document.getElementById('content-list');
+  if (!apiOnline) {
+    el.innerHTML = renderDemoContent();
+    return;
+  }
+  try {
+    const posts = await apiFetch('/api/content');
+    if (!posts.length) {
+      el.innerHTML = '<div class="empty"><div class="empty-icon">✅</div><div class="empty-text">Нет постов на апруве</div></div>';
+      return;
+    }
+    el.innerHTML = posts.map(renderPost).join('');
+  } catch(e) {
+    el.innerHTML = renderDemoContent();
+  }
+}
+
+function renderPost(p) {
+  const statusBadge = {
+    'approval': '<span class="badge badge-orange">Апрув</span>',
+    'scheduled': '<span class="badge badge-blue">Запланирован</span>',
+    'published': '<span class="badge badge-green">Опубликован</span>',
+    'draft': '<span class="badge badge-purple">Черновик</span>',
+  }[p.status] || `<span class="badge badge-purple">${p.status}</span>`;
+
+  const dt = p.scheduled_at ? new Date(p.scheduled_at).toLocaleString('ru', {day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'}) : '—';
+  const channels = p.channels ? p.channels.split(',').join(' · ') : '';
+  const selected = selectedVariants[p.id] || '';
+
+  return `<div class="post-card">
+    <div class="post-header">
+      <div class="post-title">${p.title || 'Без названия'}</div>
+      ${statusBadge}
+    </div>
+    <div class="post-meta">${channels ? channels + ' · ' : ''}${dt}${p.brand ? ' · ' + p.brand : ''}</div>
+    ${p.body_a ? `<div class="post-body">${p.body_a}</div>` : ''}
+    ${p.status === 'approval' ? `
+    <div class="post-actions">
+      <div class="variant-btns">
+        <button class="variant-btn ${selected==='A'?'selected':''}" onclick="selectVariant(${p.id},'A')">A</button>
+        <button class="variant-btn ${selected==='B'?'selected':''}" onclick="selectVariant(${p.id},'B')">B</button>
+        <button class="variant-btn ${selected==='C'?'selected':''}" onclick="selectVariant(${p.id},'C')">C</button>
+      </div>
+      <button class="btn btn-ghost btn-sm" onclick="sendCmd('APPROVALS:${p.id}')">Просмотр</button>
+      ${selected ? `<button class="btn btn-success btn-sm" onclick="approvePost(${p.id},'${selected}')">✓ Утвердить ${selected}</button>` : ''}
+    </div>` : ''}
+  </div>`;
+}
+
+function renderDemoContent() {
+  const demo = [
+    {id:1, title:'Знакомство с Dom SE', status:'approval', scheduled_at:'2026-06-16T12:00:00', channels:'telegram,max', brand:'DOMSE', body_a:'Привет! Мы Dom SE — команда Дениса Суворова. Занимаемся остеклением в Пензе.'},
+    {id:2, title:'Карусель объекта', status:'approval', scheduled_at:'2026-06-18T18:30:00', channels:'telegram,vk', brand:'DOMSE', body_a:'Посмотрите на наш последний объект — балкон в центре города.'},
+    {id:3, title:'3 ошибки подрядчика', status:'approval', scheduled_at:'2026-06-20T11:00:00', channels:'telegram,dzen', brand:'DOMSE', body_a:'Разбираем 3 главные ошибки при выборе подрядчика для остекления.'},
+    {id:4, title:'Сравнение решений', status:'approval', scheduled_at:'2026-06-23T13:00:00', channels:'telegram,max', brand:'DOMSE', body_a:'Тёплый vs холодный балкон — что выбрать?'},
+  ];
+  return demo.map(renderPost).join('');
+}
+
+function selectVariant(postId, variant) {
+  selectedVariants[postId] = selectedVariants[postId] === variant ? '' : variant;
+  loadContent();
+}
+
+async function approvePost(postId, variant) {
+  if (!apiOnline) { sendCmdFallback(`CHOOSE:${postId}:${variant}`); return; }
+  try {
+    const d = await apiFetch('/api/content/approve', {
+      method: 'POST',
+      body: JSON.stringify({ id: postId, variant })
+    });
+    toast(d.ok ? `✓ Пост #${postId} вариант ${variant} утверждён` : '✗ ' + d.error, d.ok ? 'success' : 'error');
+    if (d.ok) { delete selectedVariants[postId]; setTimeout(loadContent, 800); }
+  } catch(e) { toast('Ошибка', 'error'); }
+}
+
+// ── CHANNELS ─────────────────────────────────────────────────────────────────
+async function loadChannels() {
+  const el = document.getElementById('channels-list');
+  if (!apiOnline) {
+    el.innerHTML = renderDemoChannels();
+    return;
+  }
+  try {
+    const channels = await apiFetch('/api/channels');
+    if (!channels.length) { el.innerHTML = '<div class="empty"><div class="empty-icon">📡</div><div class="empty-text">Каналов нет — добавь первый</div></div>'; return; }
+    const byPlatform = {};
+    channels.forEach(c => { const p = c.platform || 'other'; (byPlatform[p] = byPlatform[p] || []).push(c); });
+    let html = '';
+    for (const [platform, list] of Object.entries(byPlatform)) {
+      html += `<div class="section-label">${platform.toUpperCase()}</div><div class="card">`;
+      html += list.map(c => `
+        <div class="channel-row">
+          <div class="list-icon" style="background:rgba(79,142,247,.15)">${platformIcon(platform)}</div>
+          <div style="flex:1">
+            <div class="list-name">${c.name || c.username || '—'}</div>
+            <div class="list-meta">${c.username || c.chat_id || ''} · ${c.brand || ''}</div>
+          </div>
+          <div class="toggle ${c.active ? 'on' : ''}" onclick="toggleChannel(${c.id}, this)"></div>
+        </div>`).join('');
+      html += '</div>';
+    }
+    el.innerHTML = html;
+  } catch(e) { el.innerHTML = renderDemoChannels(); }
+}
+
+function renderDemoChannels() {
+  return `<div class="section-label">TELEGRAM</div><div class="card">
+    <div class="channel-row"><div class="list-icon" style="background:rgba(79,142,247,.15)">💬</div><div style="flex:1"><div class="list-name">SEDOM Бани</div><div class="list-meta">@sedom_bany · SEDOM</div></div><div class="toggle on" onclick="this.classList.toggle('on')"></div></div>
+    <div class="channel-row"><div class="list-icon" style="background:rgba(79,142,247,.15)">💬</div><div style="flex:1"><div class="list-name">Денис Суворов</div><div class="list-meta">@denis_suvorov · DOMSE</div></div><div class="toggle on" onclick="this.classList.toggle('on')"></div></div>
+  </div>
+  <div class="section-label">MAX</div><div class="card">
+    <div class="channel-row"><div class="list-icon" style="background:rgba(255,140,0,.15)">🅼</div><div style="flex:1"><div class="list-name">Тест</div><div class="list-meta">@id580308579385_bot</div></div><div class="toggle on" onclick="this.classList.toggle('on')"></div></div>
+  </div>`;
+}
+
+function platformIcon(p) {
+  return {telegram:'💬', max:'🅼', vk:'🔵', dzen:'🟠', avito:'🔴'}[p] || '📡';
+}
+
+async function toggleChannel(id, el) {
+  el.classList.toggle('on');
+  const active = el.classList.contains('on');
+  if (!apiOnline) return;
+  try {
+    await apiFetch('/api/channels/toggle', { method: 'POST', body: JSON.stringify({ id, active }) });
+  } catch(e) { el.classList.toggle('on'); }
+}
+
+async function addChannel() {
+  const name = document.getElementById('ch-name').value.trim();
+  const username = document.getElementById('ch-username').value.trim();
+  const platform = document.getElementById('ch-platform').value;
+  const brand = document.getElementById('ch-brand').value;
+  if (!name || !username) { toast('Заполни название и username', 'error'); return; }
+  const cmd = `ADDCHANNEL:${name}:${platform}:${username}:${brand}`;
+  await sendCmd(cmd);
+  document.getElementById('ch-name').value = '';
+  document.getElementById('ch-username').value = '';
+  setTimeout(loadChannels, 500);
+}
+
+// ── ANALYTICS ────────────────────────────────────────────────────────────────
+function loadAnalytics() {
+  // Демо данные (реальные появятся когда добавим логи по площадкам)
+  const data = { tg: 17, max: 12, dzen: 7, avito: 3 };
+  const max = Math.max(...Object.values(data));
+  const set = (id, val) => {
+    document.getElementById('ch-' + id).style.width = (val / max * 100) + '%';
+    document.getElementById('cv-' + id).textContent = val;
+  };
+  set('tg', data.tg); set('max', data.max); set('dzen', data.dzen); set('avito', data.avito);
+}
+
+// ── GENERATE ─────────────────────────────────────────────────────────────────
+async function doGenerate() {
+  const prompt = document.getElementById('gen-prompt').value.trim();
+  if (!prompt) { toast('Введи промпт', 'error'); return; }
+  closeModal('gen-modal');
+  if (!apiOnline) { await sendCmdFallback('KIEAI:' + prompt); return; }
+  try {
+    const d = await apiFetch('/api/generate', { method: 'POST', body: JSON.stringify({ prompt }) });
+    toast(d.ok ? '🎨 Генерация запущена! Жди в Telegram' : '✗ ' + d.error, d.ok ? 'success' : 'error');
+    document.getElementById('gen-prompt').value = '';
+  } catch(e) { toast('Ошибка: ' + e.message, 'error'); }
+}
+
+async function doPublish() {
+  const text = document.getElementById('pub-text').value.trim();
+  const photo = document.getElementById('pub-photo').value.trim();
+  if (!text) { toast('Введи текст', 'error'); return; }
+  closeModal('pub-modal');
+  if (!apiOnline) {
+    await sendCmdFallback(photo ? `PUBLISH:${photo}:${text}` : `MAX:${text}`);
+    return;
+  }
+  try {
+    const d = await apiFetch('/api/channels/publish', { method: 'POST', body: JSON.stringify({ text, photo }) });
+    toast(d.ok ? '✓ Опубликовано!' : '✗ ' + d.error, d.ok ? 'success' : 'error');
+    document.getElementById('pub-text').value = '';
+    document.getElementById('pub-photo').value = '';
+  } catch(e) { toast('Ошибка', 'error'); }
+}
+
+function openDzen() {
+  const title = window.prompt('Заголовок поста:');
+  if (!title) return;
+  const text = window.prompt('Текст поста:');
+  if (!text) return;
+  sendCmd(`DZEN:${title}|${text}|`);
+}
+
+// ── UI HELPERS ────────────────────────────────────────────────────────────────
 function showPage(name) {
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
   document.getElementById('page-' + name).classList.add('active');
   document.getElementById('nav-' + name).classList.add('active');
+  if (name === 'content') loadContent();
+  else if (name === 'channels') loadChannels();
+  else if (name === 'analytics') loadAnalytics();
+  else if (name === 'settings') checkApiKeys();
 }
 
-function sendCmd(cmd) {
-  if (tg) {
-    tg.sendData(cmd);
-    toast('Команда отправлена: ' + cmd.split(':')[0]);
-  } else {
-    toast('Dev: ' + cmd);
+function openModal(id) { document.getElementById(id).classList.add('open'); }
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+
+function expandApp() {
+  if (tg) { try { tg.requestFullscreen?.(); } catch(e) {} tg.expand?.(); }
+}
+
+function toast(msg, type = '') {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.className = 'toast ' + type;
+  void el.offsetWidth;
+  el.classList.add('show');
+  clearTimeout(el._t);
+  el._t = setTimeout(() => el.classList.remove('show'), 2600);
+}
+
+function changeApiUrl() {
+  const url = window.prompt('Введи URL API (пример: https://sedomapi.serveo.net):', API);
+  if (url !== null) {
+    API = url.trim().replace(/\/$/, '');
+    localStorage.setItem('miniapp_api', API);
+    checkApi();
   }
 }
 
-function openImageGen() {
-  const prompt = window.prompt('Промпт для изображения:');
-  if (prompt) sendCmd('KIEAI:' + prompt);
+async function sendCmdFallback(cmd) {
+  if (tg?.sendData) {
+    tg.sendData(cmd);
+    toast('Отправлено: ' + cmd.split(':')[0], 'success');
+  } else {
+    toast('API не подключён', 'error');
+  }
 }
 
-function fabAction() {
-  const page = document.querySelector('.page.active').id.replace('page-', '');
-  if (page === 'content') openImageGen();
-  else if (page === 'channels') sendCmd('ADDCHANNEL:');
-  else toast('Новое действие...');
+async function checkApiKeys() {
+  if (!apiOnline) return;
+  try {
+    const d = await apiFetch('/api/stats');
+    document.getElementById('kieai-status').textContent = '(проверь .env)';
+    document.getElementById('anthropic-status').textContent = '(проверь .env)';
+    document.getElementById('max-status').textContent = '(проверь .env)';
+  } catch(e) {}
 }
 
-function toast(msg) {
-  const el = document.getElementById('toast');
-  el.textContent = msg;
-  el.classList.add('show');
-  setTimeout(() => el.classList.remove('show'), 2500);
-}
-
+// ── START ────────────────────────────────────────────────────────────────────
 init();
+// Check for API URL param
+const urlParams = new URLSearchParams(window.location.search);
+const paramApi = urlParams.get('api');
+if (paramApi) {
+  API = paramApi;
+  localStorage.setItem('miniapp_api', API);
+}
 </script>
 </body>
 </html>
