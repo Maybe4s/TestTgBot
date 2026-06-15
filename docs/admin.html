@@ -163,6 +163,45 @@ input[type="text"], textarea {
 input[type="text"]:focus, textarea:focus { border-color: var(--accent); }
 textarea { resize: none; height: 80px; }
 
+/* CLIENT CARDS */
+.client-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 14px; }
+.client-card {
+  border: 2px solid var(--border); border-radius: 14px; padding: 14px;
+  cursor: pointer; transition: all .2s; position: relative; overflow: hidden;
+}
+.client-card.active { border-color: var(--client-color, var(--accent)); background: rgba(79,142,247,.08); }
+.client-card::before {
+  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+  background: var(--client-color, var(--accent));
+}
+.client-card-name { font-size: 13px; font-weight: 700; margin-bottom: 3px; }
+.client-card-niche { font-size: 11px; color: var(--muted); margin-bottom: 10px; line-height: 1.3; }
+.client-card-check { font-size: 18px; font-weight: 800; color: var(--client-color, var(--accent)); }
+.client-card-check-label { font-size: 10px; color: var(--muted); }
+
+/* CLIENT REPORT */
+.client-report { display: none; }
+.client-report.active { display: block; }
+.client-header {
+  border-radius: 16px; padding: 18px; margin-bottom: 14px;
+  background: linear-gradient(135deg, var(--client-color, var(--accent))22, var(--card));
+  border: 1px solid var(--client-color, var(--border));
+}
+.client-header-name { font-size: 20px; font-weight: 800; margin-bottom: 4px; }
+.client-header-niche { font-size: 13px; color: var(--muted); margin-bottom: 14px; }
+.client-kpis { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+.client-kpi { background: rgba(0,0,0,.25); border-radius: 10px; padding: 10px; text-align: center; }
+.client-kpi-val { font-size: 20px; font-weight: 800; }
+.client-kpi-label { font-size: 10px; color: var(--muted); margin-top: 2px; }
+
+.edit-row { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+.edit-label { font-size: 12px; color: var(--muted); width: 90px; flex-shrink: 0; }
+.edit-input {
+  flex: 1; background: var(--bg); border: 1px solid var(--border); border-radius: 8px;
+  padding: 7px 10px; color: var(--text); font-size: 13px; outline: none;
+}
+.edit-input:focus { border-color: var(--accent); }
+
 /* TOAST */
 .toast {
   position: fixed; top: 64px; left: 50%; transform: translateX(-50%) translateY(-8px);
@@ -254,6 +293,7 @@ textarea { resize: none; height: 80px; }
 <!-- NAV -->
 <div class="nav">
   <button class="nav-btn active" id="nav-dashboard" onclick="showPage('dashboard')">📊 Дашборд</button>
+  <button class="nav-btn" id="nav-clients" onclick="showPage('clients')">👥 Клиенты</button>
   <button class="nav-btn" id="nav-content" onclick="showPage('content')">✏️ Контент</button>
   <button class="nav-btn" id="nav-channels" onclick="showPage('channels')">📡 Каналы</button>
   <button class="nav-btn" id="nav-analytics" onclick="showPage('analytics')">📈 Аналитика</button>
@@ -318,6 +358,20 @@ textarea { resize: none; height: 80px; }
     <div class="skeleton loading-row"></div>
     <div class="skeleton loading-row"></div>
   </div>
+</div>
+
+<!-- ══════════════════════ CLIENTS ══════════════════════ -->
+<div class="page" id="page-clients">
+
+  <!-- Переключатель клиентов -->
+  <div class="client-grid" id="client-switcher">
+    <div class="skeleton loading-row"></div>
+    <div class="skeleton loading-row"></div>
+  </div>
+
+  <!-- Отчёты (по одному на клиента) -->
+  <div id="client-reports"></div>
+
 </div>
 
 <!-- ══════════════════════ CONTENT ══════════════════════ -->
@@ -799,6 +853,7 @@ function showPage(name) {
   document.getElementById('page-' + name).classList.add('active');
   document.getElementById('nav-' + name).classList.add('active');
   if (name === 'content') loadContent();
+  else if (name === 'clients') loadClients();
   else if (name === 'channels') loadChannels();
   else if (name === 'analytics') loadAnalytics();
   else if (name === 'settings') checkApiKeys();
@@ -847,6 +902,205 @@ async function checkApiKeys() {
     document.getElementById('anthropic-status').textContent = '(проверь .env)';
     document.getElementById('max-status').textContent = '(проверь .env)';
   } catch(e) {}
+}
+
+// ── CLIENTS ──────────────────────────────────────────────────────────────────
+let allClients = [];
+let activeClientKey = null;
+
+async function loadClients() {
+  const switcher = document.getElementById('client-switcher');
+  const reports = document.getElementById('client-reports');
+
+  let clients = [];
+  if (apiOnline) {
+    try { clients = await apiFetch('/api/clients'); } catch(e) {}
+  }
+  if (!clients.length) {
+    clients = [
+      { id:1, brand_key:'SEDOM', name:'SEDOM Бани и Дома', niche:'Модульные бани, дома', avg_check:850000, color:'#4f8ef7', total_posts:4, pending:4, published:0, description:'Производство и продажа модульных бань и домов под ключ. Пенза и регионы.', contact:'' },
+      { id:2, brand_key:'DOMSE', name:'Денис Суворов', niche:'Остекление балконов', avg_check:65000, color:'#7c5cbf', total_posts:4, pending:4, published:0, description:'Остекление, отделка и утепление балконов. Dom SE — строительная экспертиза.', contact:'' },
+    ];
+  }
+  allClients = clients;
+
+  // Render switcher cards
+  switcher.innerHTML = clients.map(c => `
+    <div class="client-card ${activeClientKey === c.brand_key ? 'active' : ''}"
+         style="--client-color:${c.color}"
+         onclick="selectClient('${c.brand_key}')">
+      <div class="client-card-name">${c.name}</div>
+      <div class="client-card-niche">${c.niche || ''}</div>
+      <div class="client-card-check">${formatMoney(c.avg_check)}</div>
+      <div class="client-card-check-label">средний чек</div>
+    </div>`).join('');
+
+  // Render report sections
+  reports.innerHTML = clients.map(c => `
+    <div class="client-report ${activeClientKey === c.brand_key ? 'active' : ''}" id="report-${c.brand_key}">
+
+      <div class="client-header" style="--client-color:${c.color}">
+        <div class="client-header-name">${c.name}</div>
+        <div class="client-header-niche">${c.niche || ''}</div>
+        <div class="client-kpis">
+          <div class="client-kpi">
+            <div class="client-kpi-val" style="color:${c.color}">${formatMoney(c.avg_check)}</div>
+            <div class="client-kpi-label">Ср. чек</div>
+          </div>
+          <div class="client-kpi">
+            <div class="client-kpi-val" style="color:var(--orange)">${c.pending || 0}</div>
+            <div class="client-kpi-label">На апруве</div>
+          </div>
+          <div class="client-kpi">
+            <div class="client-kpi-val" style="color:var(--green)">${c.published || 0}</div>
+            <div class="client-kpi-label">Опубликовано</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="section-label">Контент-план</div>
+      <div id="content-${c.brand_key}">
+        <div class="skeleton loading-row"></div>
+        <div class="skeleton loading-row"></div>
+      </div>
+
+      <div class="section-label">Описание и контакты</div>
+      <div class="card">
+        <div class="edit-row">
+          <div class="edit-label">Описание</div>
+          <input class="edit-input" id="desc-${c.id}" value="${c.description || ''}" placeholder="О клиенте...">
+        </div>
+        <div class="edit-row">
+          <div class="edit-label">Контакт</div>
+          <input class="edit-input" id="contact-${c.id}" value="${c.contact || ''}" placeholder="Телефон или Telegram">
+        </div>
+        <div class="edit-row">
+          <div class="edit-label">Средний чек</div>
+          <input class="edit-input" id="check-${c.id}" value="${c.avg_check || ''}" placeholder="в рублях" type="number">
+        </div>
+        <button class="btn btn-primary btn-full" onclick="saveClient(${c.id})">Сохранить</button>
+      </div>
+
+      <div class="section-label">Быстрые действия</div>
+      <div class="card">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+          <button class="btn btn-ghost" onclick="openGenForClient('${c.brand_key}')">🎨 Картинка</button>
+          <button class="btn btn-ghost" onclick="openModal('pub-modal')">📤 Пост</button>
+          <button class="btn btn-ghost" onclick="sendCmd('CONTENTSTATUS')">📊 Статус</button>
+          <button class="btn btn-ghost" onclick="showPage('content')">✏️ Все посты</button>
+        </div>
+      </div>
+
+    </div>`).join('');
+
+  // Load content for active client
+  if (activeClientKey) {
+    loadClientContent(activeClientKey);
+  } else if (clients.length > 0) {
+    selectClient(clients[0].brand_key);
+  }
+}
+
+async function selectClient(brandKey) {
+  activeClientKey = brandKey;
+  document.querySelectorAll('.client-card').forEach(el => el.classList.remove('active'));
+  document.querySelectorAll('.client-report').forEach(el => el.classList.remove('active'));
+  const card = document.querySelector(`[onclick="selectClient('${brandKey}')"]`);
+  if (card) card.classList.add('active');
+  const report = document.getElementById('report-' + brandKey);
+  if (report) report.classList.add('active');
+  loadClientContent(brandKey);
+}
+
+async function loadClientContent(brandKey) {
+  const el = document.getElementById('content-' + brandKey);
+  if (!el) return;
+
+  let posts = [];
+  if (apiOnline) {
+    try { posts = await apiFetch('/api/clients/' + brandKey + '/content'); } catch(e) {}
+  }
+
+  if (!posts.length) {
+    // filter from demo
+    const demo = getDemoContent().filter(p => p.brand === brandKey || brandKey === 'SEDOM');
+    posts = demo;
+  }
+
+  if (!posts.length) {
+    el.innerHTML = '<div class="empty"><div class="empty-icon">📝</div><div class="empty-text">Нет постов — создай первый</div></div>';
+    return;
+  }
+  el.innerHTML = posts.map(p => renderClientPost(p)).join('');
+}
+
+function renderClientPost(p) {
+  const statusBadge = {
+    'approval': '<span class="badge badge-orange">Апрув</span>',
+    'scheduled': '<span class="badge badge-blue">Запланирован</span>',
+    'published': '<span class="badge badge-green">Опубликован</span>',
+    'draft': '<span class="badge badge-purple">Черновик</span>',
+  }[p.status] || `<span class="badge badge-purple">${p.status}</span>`;
+
+  const dt = p.scheduled_at ? new Date(p.scheduled_at).toLocaleString('ru', {
+    day:'numeric', month:'short', hour:'2-digit', minute:'2-digit'
+  }) : '—';
+  const ch = (p.channels || '').split(',').filter(Boolean).join(' · ');
+
+  return `<div class="post-card">
+    <div class="post-header">
+      <div class="post-title">${p.title || 'Без названия'}</div>
+      ${statusBadge}
+    </div>
+    <div class="post-meta">${ch ? ch + ' · ' : ''}${dt}</div>
+    ${p.body_a ? `<div class="post-body">${p.body_a}</div>` : ''}
+    ${p.status === 'approval' ? `
+    <div class="post-actions">
+      <div class="variant-btns">
+        <button class="variant-btn" onclick="selectVariant(${p.id},'A')">A</button>
+        <button class="variant-btn" onclick="selectVariant(${p.id},'B')">B</button>
+        <button class="variant-btn" onclick="selectVariant(${p.id},'C')">C</button>
+      </div>
+      <button class="btn btn-ghost btn-sm" onclick="sendCmd('APPROVALS:${p.id}')">Просмотр</button>
+    </div>` : ''}
+  </div>`;
+}
+
+function getDemoContent() {
+  return [
+    {id:1,title:'Знакомство с Dom SE',status:'approval',scheduled_at:'2026-06-16T12:00:00',channels:'telegram,max',brand:'DOMSE',body_a:'Привет! Мы Dom SE — команда Дениса Суворова.'},
+    {id:2,title:'Карусель объекта',status:'approval',scheduled_at:'2026-06-18T18:30:00',channels:'telegram,vk',brand:'DOMSE',body_a:'Посмотрите на наш последний объект.'},
+    {id:3,title:'3 ошибки подрядчика',status:'approval',scheduled_at:'2026-06-20T11:00:00',channels:'telegram,dzen',brand:'DOMSE',body_a:'3 главные ошибки при выборе подрядчика.'},
+    {id:4,title:'Сравнение решений',status:'approval',scheduled_at:'2026-06-23T13:00:00',channels:'telegram,max',brand:'DOMSE',body_a:'Тёплый vs холодный балкон — что выбрать?'},
+  ];
+}
+
+async function saveClient(clientId) {
+  const desc = document.getElementById('desc-' + clientId)?.value || '';
+  const contact = document.getElementById('contact-' + clientId)?.value || '';
+  const avg_check = parseInt(document.getElementById('check-' + clientId)?.value || 0);
+  if (!apiOnline) { toast('API не подключён', 'error'); return; }
+  try {
+    const d = await apiFetch(`/api/clients/${clientId}`, {
+      method: 'PATCH',
+      body: JSON.stringify({ description: desc, contact, avg_check })
+    });
+    toast(d.ok ? '✓ Сохранено' : '✗ ' + d.error, d.ok ? 'success' : 'error');
+    if (d.ok) loadClients();
+  } catch(e) { toast('Ошибка', 'error'); }
+}
+
+function openGenForClient(brandKey) {
+  document.getElementById('gen-prompt').value = '';
+  document.getElementById('gen-prompt').placeholder = `Промпт для ${brandKey === 'SEDOM' ? 'SEDOM бани' : 'Dom SE остекление'}...`;
+  openModal('gen-modal');
+}
+
+function formatMoney(n) {
+  if (!n) return '—';
+  if (n >= 1000000) return (n/1000000).toFixed(n%1000000 ? 1 : 0) + ' млн';
+  if (n >= 1000) return Math.round(n/1000) + ' тыс';
+  return n + ' ₽';
 }
 
 // ── START ────────────────────────────────────────────────────────────────────
