@@ -1,0 +1,236 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Контент для 5 ниш — Marketing OS</title>
+  <style>
+    :root { --bg:#0d0d0d; --card:#1a1a1a; --border:#2a2a2a; --ink:#f0f0f0; --muted:#888; --accent:#7fff5f; }
+    * { box-sizing:border-box; margin:0; padding:0; }
+    body { font-family:Inter,-apple-system,Arial,sans-serif; background:var(--bg); color:var(--ink); line-height:1.55; }
+    nav { position:sticky; top:0; background:rgba(13,13,13,.92); backdrop-filter:blur(12px); border-bottom:1px solid var(--border); padding:0 5vw; display:flex; align-items:center; height:56px; gap:20px; }
+    .logo { font-weight:800; font-size:17px; color:var(--ink); text-decoration:none; }
+    .logo span { color:var(--accent); }
+    a.back { color:var(--muted); font-size:14px; text-decoration:none; }
+    .wrap { max-width:1100px; margin:0 auto; padding:60px 5vw; }
+    h1 { font-size:clamp(28px,5vw,52px); font-weight:800; letter-spacing:-1.5px; margin-bottom:16px; }
+    .lead { color:var(--muted); font-size:18px; max-width:600px; margin-bottom:48px; }
+    .niche-block { border:1px solid var(--border); border-radius:10px; overflow:hidden; margin-bottom:32px; }
+    .niche-header { background:var(--card); padding:24px 28px; display:flex; align-items:center; gap:16px; border-bottom:1px solid var(--border); }
+    .niche-icon { font-size:32px; }
+    .niche-name { font-size:20px; font-weight:700; }
+    .niche-desc { font-size:14px; color:var(--muted); margin-top:3px; }
+    .posts-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:0; }
+    .post-item { padding:20px 24px; border-right:1px solid var(--border); border-bottom:1px solid var(--border); }
+    .post-item:nth-child(3n) { border-right:none; }
+    .post-item:nth-last-child(-n+3) { border-bottom:none; }
+    .post-date { font-size:11px; color:var(--muted); font-weight:700; letter-spacing:1px; text-transform:uppercase; margin-bottom:6px; }
+    .post-title { font-size:15px; font-weight:700; margin-bottom:6px; }
+    .post-format { display:inline-block; padding:2px 8px; border-radius:999px; font-size:11px; font-weight:700; background:#1a2a1a; color:#7fff5f; margin-bottom:8px; }
+    .post-body { font-size:13px; color:var(--muted); line-height:1.5; }
+    .post-channels { font-size:11px; color:#555; margin-top:8px; }
+    .kieai-prompt { background:#111; border:1px solid var(--border); border-radius:6px; padding:12px; margin-top:10px; font-size:12px; color:#666; font-family:monospace; line-height:1.4; }
+    @media(max-width:700px) { .posts-grid { grid-template-columns:1fr; } .post-item { border-right:none; } }
+  </style>
+</head>
+<body>
+<nav>
+  <a class="logo" href="index.html">Marketing<span>OS</span></a>
+  <a class="back" href="index.html">← Назад</a>
+</nav>
+<div class="wrap">
+  <h1>Контент для 5 ниш</h1>
+  <p class="lead">Готовые контент-планы на неделю для потенциальных клиентов. Каждый пост с темой, форматом, текстом и промптом для GPT-Image-2.</p>
+
+  <!-- НИША 1: ОСТЕКЛЕНИЕ -->
+  <div class="niche-block">
+    <div class="niche-header">
+      <div class="niche-icon">🪟</div>
+      <div>
+        <div class="niche-name">Остекление — Денис Суворов</div>
+        <div class="niche-desc">Балконы, лоджии, офисные перегородки · Telegram, VK, Дзен, Авито</div>
+      </div>
+    </div>
+    <div class="posts-grid">
+      <div class="post-item">
+        <div class="post-date">Пн, 16 июня · 12:00</div>
+        <div class="post-title">Балкон до и после: кейс за 8 дней</div>
+        <div class="post-format">Карусель 5 фото</div>
+        <div class="post-body">До: открытый балкон, пыль, шум. После: тёплое остекление, уют, своя комната для работы. 8 дней — от замера до сдачи. Показываем каждый этап.</div>
+        <div class="post-channels">📡 Telegram, VK</div>
+        <div class="kieai-prompt">Before/after residential balcony glazing in Russia. Left: open dusty balcony. Right: warm double-pane glazing, clean cozy space. Split composition, natural light, realistic photo.</div>
+      </div>
+      <div class="post-item">
+        <div class="post-date">Ср, 18 июня · 18:00</div>
+        <div class="post-title">Сколько стоит остеклить балкон в Пензе</div>
+        <div class="post-format">1 обложка</div>
+        <div class="post-body">Разбираем ценообразование честно: материалы, профиль, монтаж, доставка. Почему разница 30–200 тыс. — и что стоит за каждой цифрой.</div>
+        <div class="post-channels">📡 Telegram, Дзен</div>
+        <div class="kieai-prompt">Clean editorial cover for Russian glazing company. Dark background, bold price typography overlay in Russian '30 000 — 200 000 ₽', construction professional aesthetic.</div>
+      </div>
+      <div class="post-item">
+        <div class="post-date">Пт, 20 июня · 11:00</div>
+        <div class="post-title">5 ошибок при выборе остекления</div>
+        <div class="post-format">Экспертный пост</div>
+        <div class="post-body">Выбирать только по цене. Не смотреть профиль вживую. Не спрашивать про тепло- и звукоизоляцию. Не читать договор. Не видеть готовые объекты.</div>
+        <div class="post-channels">📡 Telegram, Дзен, Авито</div>
+        <div class="kieai-prompt">Minimalist editorial cover. Large '5' as design element, dark professional background, glazing/windows texture. Russian construction expert aesthetics.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- НИША 2: МОДУЛЬНЫЕ ДОМА SEDOM -->
+  <div class="niche-block">
+    <div class="niche-header">
+      <div class="niche-icon">🏠</div>
+      <div>
+        <div class="niche-name">Модульные дома и бани — SEDOM</div>
+        <div class="niche-desc">dom-se.ru · Мытищи · Telegram, MAX, Авито, Дзен</div>
+      </div>
+    </div>
+    <div class="posts-grid">
+      <div class="post-item">
+        <div class="post-date">Пн, 16 июня · 12:00</div>
+        <div class="post-title">Баня 6×3,5 — готова за 14 дней</div>
+        <div class="post-format">Карусель 5 фото</div>
+        <div class="post-body">Один модуль 6×3,5 м. Без разрешений на строительство. Тёплый контур от 890 000 ₽. 5 фото: завод, монтаж, готовая баня, интерьер, план.</div>
+        <div class="post-channels">📡 Telegram, MAX, Авито</div>
+        <div class="kieai-prompt">Modular sauna/bathhouse 6x3.5 meters in Russian countryside. Dark wooden exterior, modern minimalist design, snow/summer landscape. Professional product photography, 16:9.</div>
+      </div>
+      <div class="post-item">
+        <div class="post-date">Ср, 18 июня · 18:30</div>
+        <div class="post-title">Почему модульный дом быстрее кирпичного</div>
+        <div class="post-format">Сравнение 2 картинок</div>
+        <div class="post-body">Слева — стройка кирпичного дома, 12–18 месяцев. Справа — модульный SEDOM, 30–90 дней. Одинаковая площадь. Разная скорость.</div>
+        <div class="post-channels">📡 Telegram, Дзен</div>
+        <div class="kieai-prompt">Split comparison: traditional brick house construction site (messy, slow) vs clean modern modular home ready to install. Russian countryside setting. Labels: 'Кирпич: 18 мес' / 'SEDOM: 60 дней'.</div>
+      </div>
+      <div class="post-item">
+        <div class="post-date">Пт, 20 июня · 11:00</div>
+        <div class="post-title">Глэмпинг на модульных домах: бизнес-кейс</div>
+        <div class="post-format">Экспертный пост</div>
+        <div class="post-body">5 модулей Core 10,5×3,45 м на базе отдыха. Инвестиции — от 15 млн ₽. Выручка — от 80 000 ₽ в месяц с домика. Срок окупаемости — 2–3 года.</div>
+        <div class="post-channels">📡 Telegram, MAX, Дзен</div>
+        <div class="kieai-prompt">Luxury glamping resort Russia. Multiple modern modular houses in forest, warm lighting, evening atmosphere, premium eco-resort aesthetic. Aerial/ground view mix.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- НИША 3: МЕБЕЛЬ НА ЗАКАЗ -->
+  <div class="niche-block">
+    <div class="niche-header">
+      <div class="niche-icon">🛋️</div>
+      <div>
+        <div class="niche-name">Мебель на заказ</div>
+        <div class="niche-desc">Кухни, шкафы, гардеробные · VK, Telegram, Яндекс Карты</div>
+      </div>
+    </div>
+    <div class="posts-grid">
+      <div class="post-item">
+        <div class="post-date">Пн, 16 июня · 12:00</div>
+        <div class="post-title">Кухня до/после: хрущёвка стала мечтой</div>
+        <div class="post-format">Карусель 5 фото</div>
+        <div class="post-body">6 м² в хрущёвке. До: тесно, хаос, советская мебель. После: встроенная техника, остров, 12 ящиков. Срок — 3 недели. Показываем процесс и детали.</div>
+        <div class="post-channels">📡 VK, Telegram</div>
+        <div class="kieai-prompt">Kitchen renovation before/after in small Russian apartment. Before: old Soviet kitchen. After: modern custom kitchen with island, integrated appliances, clean minimalist Russian interior.</div>
+      </div>
+      <div class="post-item">
+        <div class="post-date">Ср, 18 июня · 17:00</div>
+        <div class="post-title">Из чего складывается цена кухни на заказ</div>
+        <div class="post-format">1 обложка + инфографика</div>
+        <div class="post-body">Фасады — 35%. Корпус — 25%. Фурнитура — 20%. Столешница — 10%. Монтаж — 10%. Самое дорогое — фасады, самое важное — фурнитура.</div>
+        <div class="post-channels">📡 VK, Дзен</div>
+        <div class="kieai-prompt">Clean infographic for Russian custom furniture company. Pie chart breakdown of kitchen cabinet pricing components. Dark elegant background, white typography, luxury furniture aesthetic.</div>
+      </div>
+      <div class="post-item">
+        <div class="post-date">Пт, 20 июня · 11:00</div>
+        <div class="post-title">3 вопроса, которые нужно задать производителю</div>
+        <div class="post-format">Экспертный пост</div>
+        <div class="post-body">1. Из какого материала корпус? 2. Какая фурнитура (производитель)? 3. Есть ли примеры готовых работ живьём? Эти три вопроса отфильтруют 90% недобросовестных исполнителей.</div>
+        <div class="post-channels">📡 Telegram, VK, Яндекс Карты</div>
+        <div class="kieai-prompt">Minimal editorial cover. Clean dark background, large '3?' typography, premium Russian furniture workshop atmosphere, professional lighting.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- НИША 4: РЕМОНТ КВАРТИР -->
+  <div class="niche-block">
+    <div class="niche-header">
+      <div class="niche-icon">🔨</div>
+      <div>
+        <div class="niche-name">Ремонт квартир</div>
+        <div class="niche-desc">Комплексный ремонт, отделка · Telegram, VK, Дзен, Авито</div>
+      </div>
+    </div>
+    <div class="posts-grid">
+      <div class="post-item">
+        <div class="post-date">Пн, 16 июня · 12:00</div>
+        <div class="post-title">Новостройка: от бетона до уюта за 2 месяца</div>
+        <div class="post-format">Карусель 5 фото</div>
+        <div class="post-body">Однушка 42 м² в ЖК. Этапы: разводка, стяжка, штукатурка, плитка, финишка. Бюджет — 450 000 ₽. Сдали на 10 дней раньше срока.</div>
+        <div class="post-channels">📡 Telegram, VK, Авито</div>
+        <div class="kieai-prompt">Russian apartment renovation progress. Collage: bare concrete new build interior stages to finished modern apartment. Clean modern Russian interior design, 5 stage sequence.</div>
+      </div>
+      <div class="post-item">
+        <div class="post-date">Ср, 18 июня · 18:00</div>
+        <div class="post-title">Почему сметы расходятся: как не попасть</div>
+        <div class="post-format">1 обложка</div>
+        <div class="post-body">3 причины, по которым финальная сумма отличается от первоначальной: скрытые работы, материалы «по факту», незафиксированные объёмы. Объясняем как работаем мы.</div>
+        <div class="post-channels">📡 Telegram, Дзен</div>
+        <div class="kieai-prompt">Construction estimate document, Russian building calculator concept. Dark editorial cover, typography overlay 'Смета', honest professional construction company aesthetic.</div>
+      </div>
+      <div class="post-item">
+        <div class="post-date">Пт, 20 июня · 11:00</div>
+        <div class="post-title">Ошибка №1 при ремонте: начинать без проекта</div>
+        <div class="post-format">Экспертный пост</div>
+        <div class="post-body">Без проекта теряется 15–25% бюджета. Переделки, пересмотр материалов, логические ошибки. 30 000 ₽ на дизайн-проект экономят 100–200 тысяч на ремонте.</div>
+        <div class="post-channels">📡 Telegram, Дзен, VK</div>
+        <div class="kieai-prompt">Editorial cover Russian renovation company. Blueprint/floor plan overlay on construction background. Professional expert content aesthetic, dark moody colors.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- НИША 5: СТРОИТЕЛЬНЫЕ УСЛУГИ -->
+  <div class="niche-block">
+    <div class="niche-header">
+      <div class="niche-icon">🏗️</div>
+      <div>
+        <div class="niche-name">Строительные услуги</div>
+        <div class="niche-desc">Фундаменты, каркасные дома, коммерческие объекты · Telegram, MAX, Яндекс Карты</div>
+      </div>
+    </div>
+    <div class="posts-grid">
+      <div class="post-item">
+        <div class="post-date">Пн, 16 июня · 12:00</div>
+        <div class="post-title">Каркасный дом: от фундамента до крыши за 45 дней</div>
+        <div class="post-format">Карусель 5 фото</div>
+        <div class="post-body">Дом 9×9 м, 2 этажа. Этапы: фундамент плита → каркас → кровля → утепление → финиш. Бюджет под ключ — 4,2 млн ₽. Реальный объект, реальные фото.</div>
+        <div class="post-channels">📡 Telegram, MAX</div>
+        <div class="kieai-prompt">Frame house construction progress Russia. Time-lapse style collage from foundation to complete 2-story frame house in 45 days. Russian countryside, summer, professional photo series.</div>
+      </div>
+      <div class="post-item">
+        <div class="post-date">Ср, 18 июня · 18:00</div>
+        <div class="post-title">Сравнение: каркас vs газобетон vs брус</div>
+        <div class="post-format">Сравнение 2 картинок</div>
+        <div class="post-body">По цене, теплопотерям, скорости строительства и долговечности. Честная таблица без рекламы — у каждого свои плюсы для своей задачи.</div>
+        <div class="post-channels">📡 Telegram, Дзен</div>
+        <div class="kieai-prompt">Comparison infographic three Russian house types: frame/каркас, gas block/газобетон, log/брус. Clean modern comparison table design, dark background, professional construction analytics.</div>
+      </div>
+      <div class="post-item">
+        <div class="post-date">Пт, 20 июня · 11:00</div>
+        <div class="post-title">Команда строит дом — покажи, как</div>
+        <div class="post-format">Видео-рилс / Reels</div>
+        <div class="post-body">Монтаж за 30–60 секунд: утро на объекте, процесс, финал дня. Без лишних слов — только работа. Люди доверяют тем, кого видели в работе.</div>
+        <div class="post-channels">📡 VK Reels, Telegram</div>
+        <div class="kieai-prompt">Construction team working on Russian house frame. Action shot, morning light, team of builders, wooden frame structure going up. Cinematic documentary style, 9:16 vertical format.</div>
+      </div>
+    </div>
+  </div>
+
+  <div style="text-align:center; margin-top:60px; padding:40px; border:1px solid var(--border); border-radius:10px; background:var(--card);">
+    <div style="font-size:14px; color:var(--muted); margin-bottom:16px;">Хочешь такой контент-план для своего бизнеса?</div>
+    <a href="https://t.me/ilakurockin" style="display:inline-flex; align-items:center; gap:8px; background:#229ED9; color:#fff; border-radius:999px; padding:12px 28px; font-weight:700; font-size:15px; text-decoration:none;">Написать в Telegram</a>
+  </div>
+</div>
+</body>
+</html>

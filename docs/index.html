@@ -1,0 +1,549 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Marketing OS — автоматизация контент-маркетинга для строительных и локальных брендов</title>
+  <meta name="description" content="Система полного цикла: анализ конкурентов → контент-план → генерация GPT-Image-2 → согласование в Telegram → отложенный постинг во все каналы.">
+  <style>
+    :root {
+      --bg: #0d0d0d;
+      --bg2: #141414;
+      --card: #1a1a1a;
+      --border: #2a2a2a;
+      --ink: #f0f0f0;
+      --muted: #888;
+      --accent: #7fff5f;
+      --accent2: #3d9bff;
+      --accent3: #ff7043;
+      --r: 10px;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body { font-family: 'Inter', -apple-system, Arial, sans-serif; background: var(--bg); color: var(--ink); line-height: 1.55; }
+
+    /* NAV */
+    nav { position: sticky; top: 0; z-index: 100; background: rgba(13,13,13,.92); backdrop-filter: blur(12px); border-bottom: 1px solid var(--border); padding: 0 5vw; display: flex; align-items: center; justify-content: space-between; height: 56px; }
+    .nav-logo { font-weight: 800; font-size: 18px; letter-spacing: -.5px; color: var(--ink); text-decoration: none; }
+    .nav-logo span { color: var(--accent); }
+    .nav-links { display: flex; gap: 28px; list-style: none; }
+    .nav-links a { color: var(--muted); text-decoration: none; font-size: 14px; transition: color .15s; }
+    .nav-links a:hover { color: var(--ink); }
+    .nav-cta { background: var(--accent); color: #000; border: none; border-radius: 999px; padding: 8px 20px; font-weight: 700; font-size: 14px; cursor: pointer; text-decoration: none; }
+
+    /* HERO */
+    .hero { padding: 100px 5vw 80px; max-width: 1200px; margin: 0 auto; }
+    .hero-badge { display: inline-flex; align-items: center; gap: 6px; background: #1a2a1a; border: 1px solid #3a5a3a; color: var(--accent); border-radius: 999px; padding: 5px 14px; font-size: 13px; font-weight: 600; margin-bottom: 28px; }
+    .hero-badge::before { content: '●'; font-size: 8px; }
+    h1 { font-size: clamp(36px, 6vw, 72px); font-weight: 800; line-height: 1.05; letter-spacing: -2px; max-width: 900px; }
+    h1 em { font-style: normal; color: var(--accent); }
+    .hero-sub { font-size: clamp(16px, 2vw, 20px); color: var(--muted); margin-top: 24px; max-width: 640px; }
+    .hero-actions { display: flex; gap: 14px; margin-top: 36px; flex-wrap: wrap; }
+    .btn-primary { background: var(--accent); color: #000; border-radius: 999px; padding: 14px 32px; font-weight: 800; font-size: 16px; text-decoration: none; }
+    .btn-secondary { background: transparent; color: var(--ink); border: 1px solid var(--border); border-radius: 999px; padding: 14px 32px; font-weight: 600; font-size: 16px; text-decoration: none; }
+    .hero-stats { display: flex; gap: 40px; margin-top: 60px; flex-wrap: wrap; }
+    .stat-item { }
+    .stat-num { font-size: 40px; font-weight: 800; color: var(--ink); }
+    .stat-label { font-size: 13px; color: var(--muted); margin-top: 2px; }
+
+    /* FLOW */
+    .section { padding: 80px 5vw; max-width: 1200px; margin: 0 auto; }
+    .section-label { font-size: 12px; font-weight: 700; letter-spacing: 2px; color: var(--accent); text-transform: uppercase; margin-bottom: 16px; }
+    h2 { font-size: clamp(28px, 4vw, 48px); font-weight: 800; letter-spacing: -1px; line-height: 1.1; margin-bottom: 12px; }
+    .section-lead { color: var(--muted); font-size: 18px; max-width: 600px; margin-bottom: 48px; }
+    .flow { display: grid; grid-template-columns: repeat(5, 1fr); gap: 2px; background: var(--border); border-radius: var(--r); overflow: hidden; }
+    .flow-step { background: var(--card); padding: 28px 20px; }
+    .flow-num { font-size: 13px; font-weight: 700; color: var(--accent); margin-bottom: 10px; }
+    .flow-title { font-size: 16px; font-weight: 700; margin-bottom: 8px; }
+    .flow-desc { font-size: 13px; color: var(--muted); line-height: 1.5; }
+
+    /* FEATURES */
+    .features { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2px; background: var(--border); border-radius: var(--r); overflow: hidden; }
+    .feat { background: var(--card); padding: 32px; }
+    .feat-icon { font-size: 28px; margin-bottom: 14px; }
+    .feat-title { font-size: 18px; font-weight: 700; margin-bottom: 8px; }
+    .feat-desc { color: var(--muted); font-size: 14px; line-height: 1.6; }
+
+    /* CONTENT PLAN TABLE */
+    .table-wrap { border-radius: var(--r); overflow: hidden; border: 1px solid var(--border); }
+    table { width: 100%; border-collapse: collapse; font-size: 14px; }
+    th { background: #1e1e1e; color: var(--muted); font-size: 11px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; padding: 12px 14px; text-align: left; }
+    td { padding: 12px 14px; border-bottom: 1px solid var(--border); vertical-align: top; }
+    tr:last-child td { border-bottom: none; }
+    tr:hover td { background: #1f1f1f; }
+    .pill { display: inline-block; border-radius: 999px; padding: 3px 10px; font-size: 11px; font-weight: 700; }
+    .pill-green { background: #1a2a1a; color: #7fff5f; }
+    .pill-blue { background: #0a1a2a; color: #7fc0ff; }
+    .pill-orange { background: #2a1a0a; color: #ffa07a; }
+    .pill-gray { background: #1e1e1e; color: #888; }
+
+    /* NICHES */
+    .niches { display: grid; grid-template-columns: repeat(5, 1fr); gap: 2px; background: var(--border); border-radius: var(--r); overflow: hidden; }
+    .niche { background: var(--card); padding: 24px; }
+    .niche-icon { font-size: 24px; margin-bottom: 12px; }
+    .niche-name { font-size: 15px; font-weight: 700; margin-bottom: 6px; }
+    .niche-posts { color: var(--accent); font-size: 13px; font-weight: 700; }
+    .niche-channels { font-size: 12px; color: var(--muted); margin-top: 6px; }
+
+    /* COMPETITORS */
+    .comp-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 2px; background: var(--border); border-radius: var(--r); overflow: hidden; }
+    .comp-item { background: var(--card); padding: 20px 24px; display: flex; gap: 16px; align-items: flex-start; }
+    .comp-score { font-size: 24px; font-weight: 800; color: var(--accent); min-width: 36px; }
+    .comp-name { font-size: 15px; font-weight: 700; margin-bottom: 4px; }
+    .comp-niche { font-size: 12px; color: var(--muted); }
+    .comp-insight { font-size: 13px; color: var(--muted); margin-top: 6px; line-height: 1.5; }
+
+    /* APPROVAL DEMO */
+    .demo-phone { background: var(--card); border: 1px solid var(--border); border-radius: 20px; padding: 24px; max-width: 380px; }
+    .demo-header { font-size: 13px; color: var(--muted); margin-bottom: 16px; }
+    .demo-msg { background: #1e2e3e; border-radius: 12px 12px 12px 4px; padding: 12px 16px; margin-bottom: 10px; font-size: 14px; line-height: 1.5; }
+    .demo-choices { display: flex; flex-direction: column; gap: 8px; margin-top: 12px; }
+    .demo-btn { border: 1px solid var(--border); border-radius: 8px; padding: 10px 14px; font-size: 13px; color: var(--ink); background: #1a1a1a; cursor: pointer; text-align: left; }
+    .demo-btn:hover { background: #222; border-color: var(--accent); }
+    .demo-btn b { color: var(--accent); }
+
+    /* PRICING */
+    .pricing { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2px; background: var(--border); border-radius: var(--r); overflow: hidden; }
+    .price-card { background: var(--card); padding: 32px; }
+    .price-card.featured { background: #0f1f0f; }
+    .price-name { font-size: 13px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: var(--muted); margin-bottom: 12px; }
+    .price-price { font-size: 38px; font-weight: 800; margin-bottom: 6px; }
+    .price-price span { font-size: 16px; font-weight: 400; color: var(--muted); }
+    .price-desc { font-size: 13px; color: var(--muted); margin-bottom: 24px; }
+    .price-list { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+    .price-list li { font-size: 14px; color: var(--muted); display: flex; gap: 10px; align-items: flex-start; }
+    .price-list li::before { content: '✓'; color: var(--accent); font-weight: 700; flex-shrink: 0; }
+    .price-list li.x::before { content: '—'; color: #444; }
+
+    /* ANALYTICS */
+    .analytics-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 2px; background: var(--border); border-radius: var(--r); overflow: hidden; }
+    .analytics-card { background: var(--card); padding: 24px; }
+    .analytics-num { font-size: 32px; font-weight: 800; }
+    .analytics-label { font-size: 13px; color: var(--muted); margin-top: 6px; }
+    .analytics-trend { font-size: 12px; color: var(--accent); margin-top: 4px; font-weight: 600; }
+
+    /* CTA */
+    .cta-block { background: var(--card); border: 1px solid var(--border); border-radius: var(--r); padding: 60px 5vw; text-align: center; }
+    .cta-block h2 { max-width: 700px; margin: 0 auto 20px; }
+    .cta-block p { color: var(--muted); max-width: 500px; margin: 0 auto 36px; font-size: 18px; }
+    .cta-tg { display: inline-flex; align-items: center; gap: 10px; background: #229ED9; color: #fff; border-radius: 999px; padding: 16px 36px; font-weight: 800; font-size: 18px; text-decoration: none; }
+
+    /* FOOTER */
+    footer { border-top: 1px solid var(--border); padding: 32px 5vw; display: flex; justify-content: space-between; align-items: center; font-size: 13px; color: var(--muted); }
+
+    /* DIVIDER */
+    .divider { border: none; border-top: 1px solid var(--border); max-width: 1200px; margin: 0 auto; }
+
+    @media (max-width: 900px) {
+      .flow, .features, .niches { grid-template-columns: 1fr; }
+      .comp-grid, .pricing, .analytics-grid { grid-template-columns: 1fr; }
+      .nav-links { display: none; }
+      .hero-stats { gap: 24px; }
+    }
+    @media (max-width: 600px) {
+      .features { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a class="nav-logo" href="#">Marketing<span>OS</span></a>
+  <ul class="nav-links">
+    <li><a href="#how">Как работает</a></li>
+    <li><a href="#plan">Контент-план</a></li>
+    <li><a href="#niches">Ниши</a></li>
+    <li><a href="#pricing">Стоимость</a></li>
+  </ul>
+  <a class="nav-cta" href="https://t.me/ilakurockin">Попробовать</a>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-badge">Запущен июнь 2026 · Строительство и локальный бизнес</div>
+  <h1>SMM на <em>автопилоте</em> для строительства, отделки и мебели</h1>
+  <p class="hero-sub">Анализируем конкурентов, генерируем контент через GPT-Image-2, согласовываем варианты прямо в Telegram и публикуем по расписанию в каждый канал.</p>
+  <div class="hero-actions">
+    <a class="btn-primary" href="#how">Как это работает</a>
+    <a class="btn-secondary" href="#plan">Контент-план Dom SE</a>
+  </div>
+  <div class="hero-stats">
+    <div class="stat-item"><div class="stat-num">12</div><div class="stat-label">постов Dom SE на месяц</div></div>
+    <div class="stat-item"><div class="stat-num">3</div><div class="stat-label">варианта формата на выбор</div></div>
+    <div class="stat-item"><div class="stat-num">5+</div><div class="stat-label">каналов публикации</div></div>
+    <div class="stat-item"><div class="stat-num">10</div><div class="stat-label">конкурентов проанализировано</div></div>
+  </div>
+</div>
+
+<hr class="divider">
+
+<!-- HOW IT WORKS -->
+<div class="section" id="how">
+  <div class="section-label">Система</div>
+  <h2>Полный цикл — от данных до публикации</h2>
+  <p class="section-lead">Никаких ТЗ дизайнерам, никаких вручную переносимых текстов. Только голосовое сообщение или одна команда в боте.</p>
+  <div class="flow">
+    <div class="flow-step">
+      <div class="flow-num">01</div>
+      <div class="flow-title">Данные клиента</div>
+      <div class="flow-desc">Google Drive, сайт, прайс, фото объектов, УТП, целевая аудитория. Подключается один раз.</div>
+    </div>
+    <div class="flow-step">
+      <div class="flow-num">02</div>
+      <div class="flow-title">Анализ конкурентов</div>
+      <div class="flow-desc">Автоматически собираем Telegram-каналы, сайты, Авито, Яндекс.Карты конкурентов в нише. Берём лучшее.</div>
+    </div>
+    <div class="flow-step">
+      <div class="flow-num">03</div>
+      <div class="flow-title">Контент-план</div>
+      <div class="flow-desc">Google Sheets с постами на месяц: тема, формат, дата, канал, статус. Живой счётчик запаса.</div>
+    </div>
+    <div class="flow-step">
+      <div class="flow-num">04</div>
+      <div class="flow-title">Генерация GPT-Image-2</div>
+      <div class="flow-desc">kie.ai делает обложки, карусели и сравнения под каждый пост. 3 варианта — A, B, C.</div>
+    </div>
+    <div class="flow-step">
+      <div class="flow-num">05</div>
+      <div class="flow-title">Согласование и постинг</div>
+      <div class="flow-desc">В Telegram приходят варианты. Вы выбираете, система публикует в Telegram, MAX, Дзен, VK по расписанию.</div>
+    </div>
+  </div>
+</div>
+
+<hr class="divider">
+
+<!-- FEATURES -->
+<div class="section">
+  <div class="section-label">Возможности</div>
+  <h2>Что умеет Marketing OS</h2>
+  <p class="section-lead">Всё что нужно SMM-специалисту — уже собрано в одной системе.</p>
+  <div class="features">
+    <div class="feat">
+      <div class="feat-icon">📊</div>
+      <div class="feat-title">Контент-план в Google Sheets</div>
+      <div class="feat-desc">Живая таблица с постами на месяц: статусы, темы, форматы, каналы, даты и время публикации. Счётчик «запас контента осталось N дней».</div>
+    </div>
+    <div class="feat">
+      <div class="feat-icon">🎨</div>
+      <div class="feat-title">Генерация GPT-Image-2</div>
+      <div class="feat-desc">Обложки 16:9, карусели 5 фото, сравнения «до/после» через kie.ai. Бренд-стиль и цвета сохраняются. Генерация одной командой в боте.</div>
+    </div>
+    <div class="feat">
+      <div class="feat-icon">✅</div>
+      <div class="feat-title">Согласование в Telegram</div>
+      <div class="feat-desc">Бот присылает варианты A/B/C. Отвечаете «выбираю B» — пост уходит в очередь. Голосовой ответ тоже работает.</div>
+    </div>
+    <div class="feat">
+      <div class="feat-icon">📅</div>
+      <div class="feat-title">Отложенный постинг</div>
+      <div class="feat-desc">Команда SCHEDULE:1:2026-06-18 18:30:telegram,max — и пост встаёт в очередь. Бот сам публикует в нужное время.</div>
+    </div>
+    <div class="feat">
+      <div class="feat-icon">📡</div>
+      <div class="feat-title">Мультиканальность</div>
+      <div class="feat-desc">Telegram-каналы, MAX (ВКонтакте для бизнеса), Яндекс Дзен RSS, VK, Авито. Одна запись — везде одновременно.</div>
+    </div>
+    <div class="feat">
+      <div class="feat-icon">📈</div>
+      <div class="feat-title">Аналитика и прогнозы</div>
+      <div class="feat-desc">Ежедневный дайджест: охваты, вовлечённость, топ-слова, пиковые часы, прогноз роста. Всё в Telegram утром.</div>
+    </div>
+    <div class="feat">
+      <div class="feat-icon">🔍</div>
+      <div class="feat-title">Анализ конкурентов</div>
+      <div class="feat-desc">Собираем 10+ конкурентов в нише: Telegram, VK, сайты, Авито, 2ГИС. Таблица: что работает → как адаптировать.</div>
+    </div>
+    <div class="feat">
+      <div class="feat-icon">🗂️</div>
+      <div class="feat-title">Работа с Google Drive</div>
+      <div class="feat-desc">Бот видит фото, PDF, каталоги клиента в папке Drive. Использует реальные объекты и материалы для контента.</div>
+    </div>
+    <div class="feat">
+      <div class="feat-icon">🤖</div>
+      <div class="feat-title">Голосовое управление</div>
+      <div class="feat-desc">Надиктовали голосом что нужно — бот расшифрует через Whisper и выполнит. Ни одной строчки кода не нужно.</div>
+    </div>
+  </div>
+</div>
+
+<hr class="divider">
+
+<!-- CONTENT PLAN -->
+<div class="section" id="plan">
+  <div class="section-label">Пример: Dom SE</div>
+  <h2>Контент-план на месяц готов</h2>
+  <p class="section-lead">12 постов с темами, форматами, датами и каналами. Уже в очереди на согласование.</p>
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Дата</th>
+          <th>Тип</th>
+          <th>Тема</th>
+          <th>Смысл</th>
+          <th>Каналы</th>
+          <th>Статус</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>16 июня, 12:00</td><td><span class="pill pill-green">Пост</span></td><td>Знакомство с Dom SE</td><td>Кто мы и как помогаем</td><td>Telegram, MAX</td><td><span class="pill pill-orange">Согласование</span></td></tr>
+        <tr><td>18 июня, 18:30</td><td><span class="pill pill-blue">Карусель</span></td><td>Объект: путь от задачи</td><td>5 кадров процесса и результата</td><td>Telegram, VK</td><td><span class="pill pill-orange">Согласование</span></td></tr>
+        <tr><td>20 июня, 11:00</td><td><span class="pill pill-green">Экспертный</span></td><td>3 ошибки при выборе подрядчика</td><td>Как не попасть на деньги</td><td>Telegram, Дзен</td><td><span class="pill pill-gray">Идея</span></td></tr>
+        <tr><td>23 июня, 13:00</td><td><span class="pill pill-blue">Сравнение</span></td><td>Дешевле vs. лучше</td><td>Объясняем разницу на примере</td><td>Telegram, MAX</td><td><span class="pill pill-gray">Идея</span></td></tr>
+        <tr><td>25 июня, 10:30</td><td><span class="pill pill-green">FAQ</span></td><td>Сроки и этапы</td><td>Что происходит после заявки</td><td>Telegram</td><td><span class="pill pill-gray">Черновик</span></td></tr>
+        <tr><td>27 июня, 17:00</td><td><span class="pill pill-blue">Карусель</span></td><td>На что смотреть в материалах</td><td>Просто о сложном</td><td>Telegram, VK</td><td><span class="pill pill-gray">Идея</span></td></tr>
+        <tr><td>29 июня, 12:00</td><td><span class="pill pill-green">Пост</span></td><td>Цена и ценность</td><td>Из чего складывается стоимость</td><td>Telegram, Дзен</td><td><span class="pill pill-gray">Идея</span></td></tr>
+        <tr><td>1 июля, 19:00</td><td><span class="pill pill-orange">Видео</span></td><td>Процесс работы</td><td>Монтаж с подписью</td><td>VK, Telegram</td><td><span class="pill pill-gray">Идея</span></td></tr>
+        <tr><td>3 июля, 13:30</td><td><span class="pill pill-green">Кейс</span></td><td>Реальный объект + отзыв</td><td>Доверие через результат</td><td>Telegram, MAX</td><td><span class="pill pill-gray">Идея</span></td></tr>
+        <tr><td>6 июля, 18:00</td><td><span class="pill pill-blue">Карусель</span></td><td>5 решений дороже на вид</td><td>Подборка визуальных идей</td><td>Telegram, VK</td><td><span class="pill pill-gray">Идея</span></td></tr>
+        <tr><td>8 июля, 11:30</td><td><span class="pill pill-green">Экспертный</span></td><td>Мифы о ремонте</td><td>Разбиваем стереотипы</td><td>Telegram, Дзен</td><td><span class="pill pill-gray">Идея</span></td></tr>
+        <tr><td>10 июля, 16:00</td><td><span class="pill pill-orange">Продажа</span></td><td>Мягкий оффер</td><td>CTA на консультацию</td><td>Все каналы</td><td><span class="pill pill-gray">Идея</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<hr class="divider">
+
+<!-- NICHES -->
+<div class="section" id="niches">
+  <div class="section-label">Для кого</div>
+  <h2>Ниши, где это уже работает</h2>
+  <p class="section-lead">Готовые шаблоны контент-планов под каждую нишу. Запускаем за 1 день.</p>
+  <div class="niches">
+    <div class="niche">
+      <div class="niche-icon">🪟</div>
+      <div class="niche-name">Остекление</div>
+      <div class="niche-posts">10–14 постов/мес</div>
+      <div class="niche-channels">Telegram, VK, Дзен, Яндекс Карты</div>
+    </div>
+    <div class="niche">
+      <div class="niche-icon">🏠</div>
+      <div class="niche-name">Модульные дома и бани</div>
+      <div class="niche-posts">16–20 постов/мес</div>
+      <div class="niche-channels">Telegram, MAX, Авито, Дзен</div>
+    </div>
+    <div class="niche">
+      <div class="niche-icon">🛋️</div>
+      <div class="niche-name">Мебель на заказ</div>
+      <div class="niche-posts">12–16 постов/мес</div>
+      <div class="niche-channels">VK, Telegram, Яндекс Карты</div>
+    </div>
+    <div class="niche">
+      <div class="niche-icon">🔨</div>
+      <div class="niche-name">Ремонт квартир</div>
+      <div class="niche-posts">14–18 постов/мес</div>
+      <div class="niche-channels">Telegram, VK, Дзен, Авито</div>
+    </div>
+    <div class="niche">
+      <div class="niche-icon">🏗️</div>
+      <div class="niche-name">Строительные услуги</div>
+      <div class="niche-posts">10–14 постов/мес</div>
+      <div class="niche-channels">Telegram, MAX, Яндекс Карты</div>
+    </div>
+  </div>
+</div>
+
+<hr class="divider">
+
+<!-- COMPETITORS -->
+<div class="section">
+  <div class="section-label">Анализ рынка</div>
+  <h2>Что уже работает у лидеров</h2>
+  <p class="section-lead">10 компаний из ниш строительство/ремонт/мебель/остекление — что берём, как адаптируем.</p>
+  <div class="comp-grid">
+    <div class="comp-item">
+      <div class="comp-score">5★</div>
+      <div>
+        <div class="comp-name">Баухаус / Good Wood</div>
+        <div class="comp-niche">Telegram • Строительство домов</div>
+        <div class="comp-insight">Архитектурные подборки, карусели 5 фото с планировками. Видео «как строим», честные сравнения. Самые высокие охваты в Telegram.</div>
+      </div>
+    </div>
+    <div class="comp-item">
+      <div class="comp-score">5★</div>
+      <div>
+        <div class="comp-name">MIRO / Остекление</div>
+        <div class="comp-niche">Яндекс Директ • Сайт • Портфолио</div>
+        <div class="comp-insight">Минимализм, калькулятор, объекты, доверие. Разборы объектов, до/после, премиальный визуал. Высокий CTR на конверсию.</div>
+      </div>
+    </div>
+    <div class="comp-item">
+      <div class="comp-score">5★</div>
+      <div>
+        <div class="comp-name">Дизайн-агентства SMM</div>
+        <div class="comp-niche">Кейсы • SEO • Рейтинги</div>
+        <div class="comp-insight">Показывают процесс и результаты. Упаковывают продукт как систему, а не просто постинг. Именно так позиционируется Marketing OS.</div>
+      </div>
+    </div>
+    <div class="comp-item">
+      <div class="comp-score">4★</div>
+      <div>
+        <div class="comp-name">Garden Foresta / Ландшафт</div>
+        <div class="comp-niche">Telegram • Lifestyle</div>
+        <div class="comp-insight">Красивые подборки, посты-настроения, сезонность. Работают на Telegram-канале как основном канале лидогенерации.</div>
+      </div>
+    </div>
+    <div class="comp-item">
+      <div class="comp-score">4★</div>
+      <div>
+        <div class="comp-name">Терем / Дома</div>
+        <div class="comp-niche">SEO • Видео • Каталог</div>
+        <div class="comp-insight">Карточки товаров: план, цена, сроки, FAQ. Подробный каталог с комплектациями. Работает на SEO + YouTube.</div>
+      </div>
+    </div>
+    <div class="comp-item">
+      <div class="comp-score">4★</div>
+      <div>
+        <div class="comp-name">Этажи / Недвижимость</div>
+        <div class="comp-niche">SEO • Соцсети • Калькуляторы</div>
+        <div class="comp-insight">Лидогенерация через квизы и калькуляторы. Локальные SEO-материалы. Работают с Пензой и городами-миллионниками.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<hr class="divider">
+
+<!-- APPROVAL DEMO -->
+<div class="section">
+  <div class="section-label">Как работает согласование</div>
+  <h2>Выбираешь вариант прямо в Telegram</h2>
+  <div style="display:grid; grid-template-columns:1fr 1fr; gap:48px; align-items:start;">
+    <div>
+      <p style="color:var(--muted); margin-bottom:24px;">Бот присылает карточку согласования: тема поста, текст, три варианта формата. Ты отвечаешь одним словом или нажимаешь кнопку — пост встаёт в очередь.</p>
+      <ul style="list-style:none; display:flex; flex-direction:column; gap:14px; color:var(--muted); font-size:14px;">
+        <li style="display:flex; gap:10px;"><span style="color:var(--accent)">✓</span> Голосовой ответ тоже работает</li>
+        <li style="display:flex; gap:10px;"><span style="color:var(--accent)">✓</span> Можно править текст перед публикацией</li>
+        <li style="display:flex; gap:10px;"><span style="color:var(--accent)">✓</span> Перенос даты командой SCHEDULE</li>
+        <li style="display:flex; gap:10px;"><span style="color:var(--accent)">✓</span> Генерация картинки командой KIEAI</li>
+        <li style="display:flex; gap:10px;"><span style="color:var(--accent)">✓</span> Публикация во все каналы сразу или по отдельности</li>
+      </ul>
+    </div>
+    <div class="demo-phone">
+      <div class="demo-header">Telegram · Marketing Bot</div>
+      <div class="demo-msg">
+        🧩 Согласование #1: Знакомство с Dom SE<br>
+        Бренд: Dom SE · Формат: Обложка + 4 фото<br><br>
+        Dom SE — пространство, где проект, материалы и результат собираются в понятную систему...<br><br>
+        Выбери вариант:
+      </div>
+      <div class="demo-choices">
+        <div class="demo-btn"><b>A)</b> Обложка 16:9 — Крупное фото + заголовок, место под логотип.</div>
+        <div class="demo-btn"><b>B)</b> Карусель 5 фото — Обложка + 4 кадра объекта/деталей.</div>
+        <div class="demo-btn"><b>C)</b> Сравнение 2 картинок — До/после или вариант 1/2.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<hr class="divider">
+
+<!-- ANALYTICS -->
+<div class="section">
+  <div class="section-label">Аналитика</div>
+  <h2>Прогнозируемые результаты за месяц</h2>
+  <p class="section-lead">Для строительного Telegram-канала с нуля при 3 постах в неделю.</p>
+  <div class="analytics-grid">
+    <div class="analytics-card">
+      <div class="analytics-num">300–800</div>
+      <div class="analytics-label">подписчиков за первый месяц</div>
+      <div class="analytics-trend">↑ при платном посеве</div>
+    </div>
+    <div class="analytics-card">
+      <div class="analytics-num">8–14%</div>
+      <div class="analytics-label">средний охват на пост</div>
+      <div class="analytics-trend">↑ для карусельных форматов</div>
+    </div>
+    <div class="analytics-card">
+      <div class="analytics-num">3–7</div>
+      <div class="analytics-label">входящих заявок в месяц</div>
+      <div class="analytics-trend">↑ при CTA в каждом 3-м посте</div>
+    </div>
+    <div class="analytics-card">
+      <div class="analytics-num">12+</div>
+      <div class="analytics-label">постов с нуля за месяц</div>
+      <div class="analytics-trend">↑ без правок вручную</div>
+    </div>
+  </div>
+</div>
+
+<hr class="divider">
+
+<!-- PRICING -->
+<div class="section" id="pricing">
+  <div class="section-label">Стоимость</div>
+  <h2>Пакеты услуг</h2>
+  <p class="section-lead">Всё включено. Без лишних совещаний, без ручного постинга.</p>
+  <div class="pricing">
+    <div class="price-card">
+      <div class="price-name">Старт</div>
+      <div class="price-price">50 000 <span>₽/мес</span></div>
+      <div class="price-desc">Для одного бренда, 1–2 соцсети</div>
+      <ul class="price-list">
+        <li>10 постов в месяц</li>
+        <li>Анализ 5 конкурентов</li>
+        <li>Контент-план в Sheets</li>
+        <li>GPT-Image-2 обложки</li>
+        <li>Telegram + MAX</li>
+        <li class="x">Согласование вариантов A/B/C</li>
+        <li class="x">Авито, Дзен, VK</li>
+      </ul>
+    </div>
+    <div class="price-card featured">
+      <div class="price-name" style="color:var(--accent)">Рост ★</div>
+      <div class="price-price" style="color:var(--accent)">90 000 <span>₽/мес</span></div>
+      <div class="price-desc">Для 1–2 брендов, все каналы</div>
+      <ul class="price-list">
+        <li>16 постов в месяц</li>
+        <li>Анализ 10 конкурентов</li>
+        <li>Контент-план + очередь</li>
+        <li>GPT-Image-2 все форматы</li>
+        <li>Все 5 каналов</li>
+        <li>Согласование A/B/C</li>
+        <li>Аналитика + прогнозы</li>
+      </ul>
+    </div>
+    <div class="price-card">
+      <div class="price-name">Агентство</div>
+      <div class="price-price">от 150 000 <span>₽/мес</span></div>
+      <div class="price-desc">Для 3–5 клиентов / white-label</div>
+      <ul class="price-list">
+        <li>3–5 брендов параллельно</li>
+        <li>Белый лейбл для клиентов</li>
+        <li>Google Drive на каждого</li>
+        <li>Telegram-бот под брендом</li>
+        <li>Все платформы</li>
+        <li>Еженедельные отчёты</li>
+        <li>Приоритетная поддержка</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<hr class="divider">
+
+<!-- CTA -->
+<div style="padding:40px 5vw; max-width:1200px; margin:0 auto;">
+  <div class="cta-block">
+    <div class="section-label" style="text-align:center">Попробовать</div>
+    <h2>Запустим контент-план за 48 часов</h2>
+    <p>Подключим Google Drive, проанализируем конкурентов, сделаем 3 варианта первого поста. Без предоплаты.</p>
+    <a class="cta-tg" href="https://t.me/ilakurockin">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.894 8.221l-1.97 9.28c-.145.658-.537.818-1.084.508l-3-2.21-1.447 1.394c-.16.16-.295.295-.605.295l.213-3.053 5.56-5.023c.242-.213-.054-.333-.373-.12L7.822 13.48l-2.96-.924c-.643-.204-.657-.643.136-.953l11.57-4.461c.537-.194 1.006.131.826.08z"/></svg>
+      Написать в Telegram
+    </a>
+  </div>
+</div>
+
+<footer>
+  <div>Marketing OS · Контент-маркетинг для строительства и локальных услуг</div>
+  <div style="display:flex; gap:20px;">
+    <a href="niches.html" style="color:var(--muted); text-decoration:none;">Контент 5 ниш →</a>
+    <a href="https://docs.google.com/spreadsheets/d/1BxQ2r4QySjnY-34v0cTFtmUvL6dFtI6yAoZxo3PfG8Q/edit" style="color:var(--muted); text-decoration:none;">Google Sheets →</a>
+  </div>
+</footer>
+
+</body>
+</html>

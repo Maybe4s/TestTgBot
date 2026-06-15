@@ -1,0 +1,700 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>Admin Panel</title>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<style>
+  :root {
+    --bg: #0e1117;
+    --card: #161b25;
+    --border: #1e2533;
+    --accent: #4f8ef7;
+    --accent2: #7c5cbf;
+    --text: #e8ecf1;
+    --muted: #6b7897;
+    --green: #2ecc71;
+    --orange: #f39c12;
+    --red: #e74c3c;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    padding-bottom: 80px;
+  }
+
+  /* HEADER */
+  .header {
+    background: var(--card);
+    border-bottom: 1px solid var(--border);
+    padding: 14px 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  .header-logo {
+    width: 36px; height: 36px;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px; font-weight: 700; color: #fff;
+    flex-shrink: 0;
+  }
+  .header-info { flex: 1; min-width: 0; }
+  .header-title { font-size: 16px; font-weight: 700; }
+  .header-sub { font-size: 12px; color: var(--muted); margin-top: 1px; }
+  .status-dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: var(--green);
+    box-shadow: 0 0 6px var(--green);
+    flex-shrink: 0;
+  }
+
+  /* NAV TABS */
+  .nav {
+    display: flex;
+    background: var(--card);
+    border-bottom: 1px solid var(--border);
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+  .nav::-webkit-scrollbar { display: none; }
+  .nav-btn {
+    flex-shrink: 0;
+    padding: 12px 16px;
+    border: none;
+    background: transparent;
+    color: var(--muted);
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    transition: all 0.2s;
+    white-space: nowrap;
+    display: flex; align-items: center; gap: 6px;
+  }
+  .nav-btn.active {
+    color: var(--accent);
+    border-bottom-color: var(--accent);
+  }
+
+  /* PAGES */
+  .page { display: none; padding: 16px; }
+  .page.active { display: block; }
+
+  /* CARDS */
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 16px;
+    margin-bottom: 12px;
+  }
+  .card-title {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 12px;
+  }
+
+  /* STAT GRID */
+  .stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 12px; }
+  .stat-item {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 14px;
+    text-align: center;
+  }
+  .stat-value { font-size: 26px; font-weight: 800; color: var(--accent); line-height: 1; }
+  .stat-label { font-size: 11px; color: var(--muted); margin-top: 4px; }
+
+  /* LIST */
+  .list-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .list-item:last-child { border-bottom: none; }
+  .list-icon {
+    width: 38px; height: 38px;
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px;
+    flex-shrink: 0;
+  }
+  .list-info { flex: 1; min-width: 0; }
+  .list-name { font-size: 14px; font-weight: 600; }
+  .list-meta { font-size: 12px; color: var(--muted); margin-top: 2px; }
+  .badge {
+    padding: 3px 8px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 600;
+    flex-shrink: 0;
+  }
+  .badge-green { background: rgba(46,204,113,0.15); color: var(--green); }
+  .badge-orange { background: rgba(243,156,18,0.15); color: var(--orange); }
+  .badge-red { background: rgba(231,76,60,0.15); color: var(--red); }
+  .badge-blue { background: rgba(79,142,247,0.15); color: var(--accent); }
+
+  /* CONTENT POSTS */
+  .post-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 14px;
+    margin-bottom: 10px;
+  }
+  .post-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px; }
+  .post-title { font-size: 14px; font-weight: 700; flex: 1; margin-right: 8px; }
+  .post-meta { font-size: 11px; color: var(--muted); margin-bottom: 8px; }
+  .post-actions { display: flex; gap: 8px; margin-top: 10px; }
+  .btn {
+    border: none; border-radius: 8px; padding: 7px 14px;
+    font-size: 12px; font-weight: 600; cursor: pointer; transition: opacity 0.2s;
+  }
+  .btn:hover { opacity: 0.85; }
+  .btn-primary { background: var(--accent); color: #fff; }
+  .btn-ghost { background: var(--border); color: var(--text); }
+  .btn-sm { padding: 5px 10px; font-size: 11px; }
+  .btn-danger { background: rgba(231,76,60,0.2); color: var(--red); }
+
+  /* CHANNELS */
+  .channel-row {
+    display: flex; align-items: center; gap: 12px;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .channel-row:last-child { border-bottom: none; }
+  .channel-icon {
+    width: 36px; height: 36px; border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px; flex-shrink: 0;
+  }
+  .toggle {
+    width: 42px; height: 24px;
+    background: var(--border);
+    border-radius: 12px;
+    position: relative;
+    cursor: pointer;
+    transition: background 0.2s;
+    flex-shrink: 0;
+  }
+  .toggle.on { background: var(--accent); }
+  .toggle::after {
+    content: '';
+    position: absolute;
+    width: 18px; height: 18px;
+    background: #fff;
+    border-radius: 50%;
+    top: 3px; left: 3px;
+    transition: transform 0.2s;
+  }
+  .toggle.on::after { transform: translateX(18px); }
+
+  /* ANALYTICS */
+  .chart-bar {
+    display: flex; align-items: center; gap: 10px; margin-bottom: 8px;
+  }
+  .chart-label { font-size: 12px; color: var(--muted); width: 60px; text-align: right; flex-shrink: 0; }
+  .chart-track { flex: 1; background: var(--border); border-radius: 4px; height: 8px; overflow: hidden; }
+  .chart-fill { height: 100%; border-radius: 4px; background: linear-gradient(90deg, var(--accent), var(--accent2)); }
+  .chart-val { font-size: 12px; font-weight: 600; width: 36px; text-align: right; flex-shrink: 0; }
+
+  /* SETTINGS */
+  .setting-row {
+    display: flex; align-items: center; gap: 12px; padding: 12px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .setting-row:last-child { border-bottom: none; }
+  .setting-icon { font-size: 20px; width: 28px; text-align: center; flex-shrink: 0; }
+  .setting-info { flex: 1; }
+  .setting-name { font-size: 14px; font-weight: 600; }
+  .setting-desc { font-size: 11px; color: var(--muted); margin-top: 2px; }
+
+  /* FLOATING ACTION */
+  .fab {
+    position: fixed;
+    bottom: 20px; right: 16px;
+    width: 52px; height: 52px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    border: none;
+    color: #fff;
+    font-size: 24px;
+    cursor: pointer;
+    box-shadow: 0 4px 20px rgba(79,142,247,0.4);
+    display: flex; align-items: center; justify-content: center;
+    transition: transform 0.2s;
+    z-index: 200;
+  }
+  .fab:active { transform: scale(0.92); }
+
+  /* EMPTY STATE */
+  .empty {
+    text-align: center;
+    padding: 40px 20px;
+    color: var(--muted);
+  }
+  .empty-icon { font-size: 48px; margin-bottom: 12px; }
+  .empty-text { font-size: 14px; }
+
+  /* SECTION DIVIDER */
+  .section-label {
+    font-size: 11px; font-weight: 700;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.7px;
+    margin: 16px 0 8px;
+    padding-left: 4px;
+  }
+
+  /* TOAST */
+  .toast {
+    position: fixed;
+    top: 70px; left: 50%; transform: translateX(-50%);
+    background: #2ecc71;
+    color: #fff;
+    padding: 10px 20px;
+    border-radius: 20px;
+    font-size: 13px; font-weight: 600;
+    opacity: 0;
+    transition: opacity 0.3s;
+    z-index: 999;
+    white-space: nowrap;
+  }
+  .toast.show { opacity: 1; }
+</style>
+</head>
+<body>
+
+<div id="toast" class="toast"></div>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="header-logo">S</div>
+  <div class="header-info">
+    <div class="header-title">SEDOM Admin</div>
+    <div class="header-sub" id="user-name">Загрузка...</div>
+  </div>
+  <div class="status-dot" id="bot-status"></div>
+</div>
+
+<!-- NAV -->
+<div class="nav">
+  <button class="nav-btn active" onclick="showPage('dashboard')" id="nav-dashboard">📊 Дашборд</button>
+  <button class="nav-btn" onclick="showPage('content')" id="nav-content">✏️ Контент</button>
+  <button class="nav-btn" onclick="showPage('channels')" id="nav-channels">📡 Каналы</button>
+  <button class="nav-btn" onclick="showPage('analytics')" id="nav-analytics">📈 Аналитика</button>
+  <button class="nav-btn" onclick="showPage('settings')" id="nav-settings">⚙️ Настройки</button>
+</div>
+
+<!-- DASHBOARD -->
+<div class="page active" id="page-dashboard">
+  <div class="stat-grid">
+    <div class="stat-item">
+      <div class="stat-value" id="stat-posts">—</div>
+      <div class="stat-label">Постов сегодня</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-value" id="stat-channels">—</div>
+      <div class="stat-label">Каналов активно</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-value" id="stat-pending">—</div>
+      <div class="stat-label">Ожидают апрув</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-value" id="stat-queue">—</div>
+      <div class="stat-label">В очереди</div>
+    </div>
+  </div>
+
+  <div class="section-label">Активные интеграции</div>
+  <div class="card">
+    <div class="list-item">
+      <div class="list-icon" style="background:rgba(79,142,247,0.15)">💬</div>
+      <div class="list-info">
+        <div class="list-name">Telegram каналы</div>
+        <div class="list-meta">@sedom_bany • @denis_suvorov</div>
+      </div>
+      <span class="badge badge-green">Онлайн</span>
+    </div>
+    <div class="list-item">
+      <div class="list-icon" style="background:rgba(255,140,0,0.15)">🅼</div>
+      <div class="list-info">
+        <div class="list-name">MAX</div>
+        <div class="list-meta">platform-api.max.ru</div>
+      </div>
+      <span class="badge badge-green">Онлайн</span>
+    </div>
+    <div class="list-item">
+      <div class="list-icon" style="background:rgba(252,88,0,0.15)">🟠</div>
+      <div class="list-info">
+        <div class="list-name">Дзен RSS</div>
+        <div class="list-meta">dzen_rss.py</div>
+      </div>
+      <span class="badge badge-green">Онлайн</span>
+    </div>
+    <div class="list-item">
+      <div class="list-icon" style="background:rgba(231,76,60,0.15)">🅰️</div>
+      <div class="list-info">
+        <div class="list-name">Авито (CDP)</div>
+        <div class="list-meta">Подключение через Chrome</div>
+      </div>
+      <span class="badge badge-orange">Настройка</span>
+    </div>
+    <div class="list-item">
+      <div class="list-icon" style="background:rgba(124,92,191,0.15)">🎨</div>
+      <div class="list-info">
+        <div class="list-name">kie.ai GPT-Image-2</div>
+        <div class="list-meta">Генерация изображений</div>
+      </div>
+      <span class="badge badge-green">Онлайн</span>
+    </div>
+  </div>
+
+  <div class="section-label">Последние действия</div>
+  <div class="card" id="recent-actions">
+    <div class="empty">
+      <div class="empty-icon">🕐</div>
+      <div class="empty-text">История загружается...</div>
+    </div>
+  </div>
+</div>
+
+<!-- CONTENT -->
+<div class="page" id="page-content">
+  <div class="section-label">Ожидают утверждения</div>
+  <div id="approval-list">
+    <div class="post-card">
+      <div class="post-header">
+        <div class="post-title">Знакомство с Dom SE</div>
+        <span class="badge badge-orange">Апрув</span>
+      </div>
+      <div class="post-meta">Telegram + MAX · 16 июня · 12:00</div>
+      <div style="font-size:13px;color:var(--muted);line-height:1.5">
+        Пост-знакомство с проектом Дениса Суворова. Три варианта текста (A/B/C).
+      </div>
+      <div class="post-actions">
+        <button class="btn btn-primary btn-sm" onclick="sendCmd('APPROVALS:1')">Посмотреть</button>
+        <button class="btn btn-ghost btn-sm" onclick="sendCmd('CHOOSE:1:A')">A</button>
+        <button class="btn btn-ghost btn-sm" onclick="sendCmd('CHOOSE:1:B')">B</button>
+        <button class="btn btn-ghost btn-sm" onclick="sendCmd('CHOOSE:1:C')">C</button>
+      </div>
+    </div>
+    <div class="post-card">
+      <div class="post-header">
+        <div class="post-title">3 ошибки подрядчика</div>
+        <span class="badge badge-orange">Апрув</span>
+      </div>
+      <div class="post-meta">Telegram + Дзен · 20 июня · 11:00</div>
+      <div style="font-size:13px;color:var(--muted);line-height:1.5">
+        Карусель с разбором частых ошибок при выборе строителей.
+      </div>
+      <div class="post-actions">
+        <button class="btn btn-primary btn-sm" onclick="sendCmd('APPROVALS:3')">Посмотреть</button>
+        <button class="btn btn-ghost btn-sm" onclick="sendCmd('CHOOSE:3:A')">A</button>
+        <button class="btn btn-ghost btn-sm" onclick="sendCmd('CHOOSE:3:B')">B</button>
+        <button class="btn btn-ghost btn-sm" onclick="sendCmd('CHOOSE:3:C')">C</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-label">Генерация контента</div>
+  <div class="card">
+    <div class="list-item">
+      <div class="list-icon" style="background:rgba(124,92,191,0.15)">🎨</div>
+      <div class="list-info">
+        <div class="list-name">Сгенерировать изображение</div>
+        <div class="list-meta">GPT-Image-2 через kie.ai</div>
+      </div>
+      <button class="btn btn-ghost btn-sm" onclick="openImageGen()">→</button>
+    </div>
+    <div class="list-item">
+      <div class="list-icon" style="background:rgba(79,142,247,0.15)">📝</div>
+      <div class="list-info">
+        <div class="list-name">Контент-план</div>
+        <div class="list-meta">CONTENTSEED — пересеять базу</div>
+      </div>
+      <button class="btn btn-ghost btn-sm" onclick="sendCmd('CONTENTSTATUS')">Статус</button>
+    </div>
+  </div>
+</div>
+
+<!-- CHANNELS -->
+<div class="page" id="page-channels">
+  <div class="section-label">Telegram</div>
+  <div class="card">
+    <div class="channel-row">
+      <div class="channel-icon" style="background:rgba(79,142,247,0.15)">💬</div>
+      <div style="flex:1">
+        <div class="list-name">SEDOM Бани</div>
+        <div class="list-meta">@sedom_bany</div>
+      </div>
+      <div class="toggle on" onclick="this.classList.toggle('on')"></div>
+    </div>
+    <div class="channel-row">
+      <div class="channel-icon" style="background:rgba(79,142,247,0.15)">💬</div>
+      <div style="flex:1">
+        <div class="list-name">Денис Суворов</div>
+        <div class="list-meta">@denis_suvorov</div>
+      </div>
+      <div class="toggle on" onclick="this.classList.toggle('on')"></div>
+    </div>
+  </div>
+
+  <div class="section-label">MAX</div>
+  <div class="card">
+    <div class="channel-row">
+      <div class="channel-icon" style="background:rgba(255,140,0,0.15)">🅼</div>
+      <div style="flex:1">
+        <div class="list-name">Тест</div>
+        <div class="list-meta">@id580308579385_bot</div>
+      </div>
+      <div class="toggle on" onclick="this.classList.toggle('on')"></div>
+    </div>
+  </div>
+
+  <div class="section-label">Другие площадки</div>
+  <div class="card">
+    <div class="channel-row">
+      <div class="channel-icon" style="background:rgba(252,88,0,0.15)">🟠</div>
+      <div style="flex:1">
+        <div class="list-name">Яндекс Дзен</div>
+        <div class="list-meta">RSS автопубликация</div>
+      </div>
+      <div class="toggle on" onclick="this.classList.toggle('on')"></div>
+    </div>
+    <div class="channel-row">
+      <div class="channel-icon" style="background:rgba(231,76,60,0.15)">🔴</div>
+      <div style="flex:1">
+        <div class="list-name">Авито</div>
+        <div class="list-meta">Chrome CDP</div>
+      </div>
+      <div class="toggle" onclick="this.classList.toggle('on')"></div>
+    </div>
+  </div>
+
+  <button class="btn btn-primary" style="width:100%;margin-top:8px" onclick="sendCmd('ADDCHANNEL:')">
+    + Добавить канал
+  </button>
+</div>
+
+<!-- ANALYTICS -->
+<div class="page" id="page-analytics">
+  <div class="stat-grid">
+    <div class="stat-item">
+      <div class="stat-value" style="color:var(--green)">↑12%</div>
+      <div class="stat-label">Охват (7д)</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-value" style="color:var(--accent)">4.8%</div>
+      <div class="stat-label">Вовлечённость</div>
+    </div>
+  </div>
+
+  <div class="section-label">Публикации по площадкам</div>
+  <div class="card">
+    <div class="chart-bar">
+      <div class="chart-label">Telegram</div>
+      <div class="chart-track"><div class="chart-fill" style="width:85%"></div></div>
+      <div class="chart-val">17</div>
+    </div>
+    <div class="chart-bar">
+      <div class="chart-label">MAX</div>
+      <div class="chart-track"><div class="chart-fill" style="width:60%"></div></div>
+      <div class="chart-val">12</div>
+    </div>
+    <div class="chart-bar">
+      <div class="chart-label">Дзен</div>
+      <div class="chart-track"><div class="chart-fill" style="width:35%"></div></div>
+      <div class="chart-val">7</div>
+    </div>
+    <div class="chart-bar">
+      <div class="chart-label">Авито</div>
+      <div class="chart-track"><div class="chart-fill" style="width:15%"></div></div>
+      <div class="chart-val">3</div>
+    </div>
+  </div>
+
+  <div class="section-label">Ежедневный дайджест</div>
+  <div class="card">
+    <div class="list-item">
+      <div class="list-icon" style="background:rgba(79,142,247,0.15)">📬</div>
+      <div class="list-info">
+        <div class="list-name">Входящих сообщений</div>
+        <div class="list-meta">За последние 24 часа</div>
+      </div>
+      <div style="font-size:20px;font-weight:800;color:var(--accent)" id="stat-incoming">—</div>
+    </div>
+    <div class="list-item">
+      <div class="list-icon" style="background:rgba(46,204,113,0.15)">🤖</div>
+      <div class="list-info">
+        <div class="list-name">Автоответов</div>
+        <div class="list-meta">Claude отвечал клиентам</div>
+      </div>
+      <div style="font-size:20px;font-weight:800;color:var(--green)" id="stat-auto">—</div>
+    </div>
+  </div>
+</div>
+
+<!-- SETTINGS -->
+<div class="page" id="page-settings">
+  <div class="card">
+    <div class="card-title">Бот</div>
+    <div class="setting-row">
+      <div class="setting-icon">🤖</div>
+      <div class="setting-info">
+        <div class="setting-name">@Maybe5s_bot</div>
+        <div class="setting-desc">Основной бот управления</div>
+      </div>
+      <span class="badge badge-green">Онлайн</span>
+    </div>
+    <div class="setting-row">
+      <div class="setting-icon">🔑</div>
+      <div class="setting-info">
+        <div class="setting-name">API ключи</div>
+        <div class="setting-desc">kie.ai, Anthropic, MAX, OpenRouter</div>
+      </div>
+      <button class="btn btn-ghost btn-sm" onclick="toast('Заполни в .env')">→</button>
+    </div>
+    <div class="setting-row">
+      <div class="setting-icon">📅</div>
+      <div class="setting-info">
+        <div class="setting-name">Расписание</div>
+        <div class="setting-desc">Автопостинг по плану</div>
+      </div>
+      <div class="toggle on" onclick="this.classList.toggle('on')"></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Бренды</div>
+    <div class="setting-row">
+      <div class="setting-icon">🏠</div>
+      <div class="setting-info">
+        <div class="setting-name">SEDOM</div>
+        <div class="setting-desc">Модульные бани и дома</div>
+      </div>
+      <span class="badge badge-blue">Активен</span>
+    </div>
+    <div class="setting-row">
+      <div class="setting-icon">🪟</div>
+      <div class="setting-info">
+        <div class="setting-name">Денис Суворов</div>
+        <div class="setting-desc">Остекление Пенза</div>
+      </div>
+      <span class="badge badge-blue">Активен</span>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Быстрые команды</div>
+    <div class="setting-row">
+      <div class="setting-icon">📊</div>
+      <div class="setting-info">
+        <div class="setting-name">Статус контента</div>
+        <div class="setting-desc">CONTENTSTATUS</div>
+      </div>
+      <button class="btn btn-ghost btn-sm" onclick="sendCmd('CONTENTSTATUS')">Запуск</button>
+    </div>
+    <div class="setting-row">
+      <div class="setting-icon">🔄</div>
+      <div class="setting-info">
+        <div class="setting-name">Пересеять посты</div>
+        <div class="setting-desc">CONTENTSEED</div>
+      </div>
+      <button class="btn btn-ghost btn-sm" onclick="sendCmd('CONTENTSEED')">Запуск</button>
+    </div>
+  </div>
+</div>
+
+<!-- FAB -->
+<button class="fab" id="fab" onclick="fabAction()">+</button>
+
+<script>
+const tg = window.Telegram?.WebApp;
+
+function init() {
+  if (tg) {
+    tg.ready();
+    tg.expand();
+    // Apply Telegram theme colors if available
+    if (tg.themeParams?.bg_color) {
+      document.documentElement.style.setProperty('--bg', tg.themeParams.bg_color);
+    }
+    const user = tg.initDataUnsafe?.user;
+    if (user) {
+      document.getElementById('user-name').textContent = `${user.first_name || ''} ${user.last_name || ''}`.trim() || 'Илья';
+    } else {
+      document.getElementById('user-name').textContent = 'Илья';
+    }
+  } else {
+    document.getElementById('user-name').textContent = 'Preview Mode';
+  }
+  loadStats();
+}
+
+function loadStats() {
+  // Static demo data — will be replaced with real API calls
+  document.getElementById('stat-posts').textContent = '3';
+  document.getElementById('stat-channels').textContent = '5';
+  document.getElementById('stat-pending').textContent = '4';
+  document.getElementById('stat-queue').textContent = '2';
+  document.getElementById('stat-incoming').textContent = '12';
+  document.getElementById('stat-auto').textContent = '7';
+}
+
+function showPage(name) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('page-' + name).classList.add('active');
+  document.getElementById('nav-' + name).classList.add('active');
+}
+
+function sendCmd(cmd) {
+  if (tg) {
+    tg.sendData(cmd);
+    toast('Команда отправлена: ' + cmd.split(':')[0]);
+  } else {
+    toast('Dev: ' + cmd);
+  }
+}
+
+function openImageGen() {
+  const prompt = window.prompt('Промпт для изображения:');
+  if (prompt) sendCmd('KIEAI:' + prompt);
+}
+
+function fabAction() {
+  const page = document.querySelector('.page.active').id.replace('page-', '');
+  if (page === 'content') openImageGen();
+  else if (page === 'channels') sendCmd('ADDCHANNEL:');
+  else toast('Новое действие...');
+}
+
+function toast(msg) {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.classList.add('show');
+  setTimeout(() => el.classList.remove('show'), 2500);
+}
+
+init();
+</script>
+</body>
+</html>
