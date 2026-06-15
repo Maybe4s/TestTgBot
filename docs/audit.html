@@ -1,0 +1,348 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Marketing OS - демо-аудит и CRM-кабинет</title>
+    <link rel="stylesheet" href="audit.css" />
+  </head>
+  <body>
+    <section class="registration-screen" id="registrationScreen" aria-labelledby="registrationTitle">
+      <div class="registration-hero">
+        <div class="brand-block">
+          <div class="brand-mark">MO</div>
+          <div>
+            <p class="eyebrow">Marketing OS</p>
+            <h1>Демо-доступ</h1>
+          </div>
+        </div>
+        <div>
+          <p class="eyebrow">Только после регистрации</p>
+          <h2 id="registrationTitle">Сначала заявка, потом аудит слабых мест и CRM-картина</h2>
+          <p class="registration-copy">
+            Клиент оставляет данные, указывает сайт и город. После этого открывается кабинет:
+            карта потерь, план работ, каналы, задачи и аналитика.
+          </p>
+        </div>
+        <div class="demo-preview" aria-label="Что откроется после регистрации">
+          <div>
+            <strong>01</strong>
+            <span>Аудит сайта, SEO, GEO, контента и заявок</span>
+          </div>
+          <div>
+            <strong>02</strong>
+            <span>Дорожная карта задач с ответственными</span>
+          </div>
+          <div>
+            <strong>03</strong>
+            <span>CRM-кабинет и аналитика по каналам</span>
+          </div>
+        </div>
+      </div>
+
+      <form class="registration-form" id="registrationForm">
+        <div class="form-heading">
+          <p class="eyebrow">Регистрация клиента</p>
+          <h2>Получить демо-аудит</h2>
+        </div>
+        <label>
+          Имя
+          <input id="clientNameInput" type="text" placeholder="Иван" required />
+        </label>
+        <label>
+          Телефон или Telegram
+          <input id="clientContactInput" type="text" placeholder="@username или +7..." required />
+        </label>
+        <label>
+          Сайт компании
+          <input id="registrationSiteInput" type="url" placeholder="https://example.ru" value="https://vash-dom.ru" required />
+        </label>
+        <div class="form-row">
+          <label>
+            Город
+            <input id="registrationCityInput" type="text" value="Пенза" required />
+          </label>
+          <label>
+            Роль
+            <select id="clientRoleInput">
+              <option>Собственник</option>
+              <option>Маркетолог</option>
+              <option>Руководитель продаж</option>
+            </select>
+          </label>
+        </div>
+        <label>
+          Ниша
+          <select id="registrationNicheInput">
+            <option>Строительство и ремонт</option>
+            <option>Мебель на заказ</option>
+            <option>Остекление</option>
+            <option>Локальные услуги</option>
+          </select>
+        </label>
+        <label class="consent-row">
+          <input id="consentInput" type="checkbox" required />
+          Согласен получить демо-аудит и рекомендации по слабым местам бизнеса
+        </label>
+        <button class="primary-action" type="submit">Открыть демо-кабинет</button>
+      </form>
+    </section>
+
+    <div class="app-shell locked" id="appShell" aria-hidden="true">
+      <aside class="sidebar" aria-label="Навигация">
+        <div class="brand-block">
+          <div class="brand-mark">MO</div>
+          <div>
+            <p class="eyebrow">Marketing OS</p>
+            <h1>Демо-аудит</h1>
+          </div>
+        </div>
+
+        <nav class="nav-list" aria-label="Разделы кабинета">
+          <button class="nav-item active" data-panel="audit">
+            <span class="nav-icon">01</span>
+            Аудит
+          </button>
+          <button class="nav-item" data-panel="roadmap">
+            <span class="nav-icon">02</span>
+            План работ
+          </button>
+          <button class="nav-item" data-panel="crm">
+            <span class="nav-icon">03</span>
+            CRM
+          </button>
+          <button class="nav-item" data-panel="analytics">
+            <span class="nav-icon">04</span>
+            Аналитика
+          </button>
+        </nav>
+
+        <div class="telegram-card">
+          <p class="eyebrow">Telegram-бот</p>
+          <strong id="botStatus">Ждёт аудита</strong>
+          <span id="botMessage">После запуска отправит клиенту итог и следующие шаги.</span>
+        </div>
+      </aside>
+
+      <main class="workspace">
+        <section class="topbar" aria-label="Демо-доступ">
+          <div>
+            <p class="eyebrow" id="clientAccessLabel">Демо-доступ для собственника</p>
+            <h2>Вставьте сайт - получите карту потерь и понятный план работ</h2>
+          </div>
+          <div class="topbar-actions">
+            <div class="status-pill">
+              <span class="pulse"></span>
+              Кабинет открыт
+            </div>
+            <button class="secondary-action compact-action" id="logoutButton" type="button">Выйти</button>
+          </div>
+        </section>
+
+        <section class="audit-form-band" aria-label="Форма демо-аудита">
+          <form id="auditForm" class="audit-form">
+            <label>
+              Сайт
+              <input id="siteInput" type="url" placeholder="https://example.ru" value="https://vash-dom.ru" required />
+            </label>
+            <label>
+              Ниша
+              <select id="nicheInput">
+                <option>Строительство и ремонт</option>
+                <option>Мебель на заказ</option>
+                <option>Остекление</option>
+                <option>Локальные услуги</option>
+              </select>
+            </label>
+            <label>
+              Город
+              <input id="cityInput" type="text" value="Пенза" required />
+            </label>
+            <fieldset class="channels-field">
+              <legend>Каналы</legend>
+              <label><input type="checkbox" value="Сайт" checked /> Сайт</label>
+              <label><input type="checkbox" value="Telegram" checked /> Telegram</label>
+              <label><input type="checkbox" value="VK" checked /> VK</label>
+              <label><input type="checkbox" value="Карты" checked /> Карты</label>
+              <label><input type="checkbox" value="Авито" /> Авито</label>
+            </fieldset>
+            <button class="primary-action" type="submit">
+              Запустить аудит
+            </button>
+          </form>
+        </section>
+
+        <section class="score-strip" aria-label="Сводка аудита">
+          <div class="score-card accent">
+            <span>Скоринг</span>
+            <strong id="scoreValue">64/100</strong>
+            <small id="scoreLabel">есть быстрые точки роста</small>
+          </div>
+          <div class="score-card">
+            <span>Слабых мест</span>
+            <strong id="issueCount">8</strong>
+            <small>превратятся в задачи</small>
+          </div>
+          <div class="score-card">
+            <span>Быстрый эффект</span>
+            <strong>14 дней</strong>
+            <small>первые правки и контент</small>
+          </div>
+          <div class="score-card">
+            <span>Пакет</span>
+            <strong id="packageName">Рост</strong>
+            <small>контент + каналы + аналитика</small>
+          </div>
+        </section>
+
+        <section class="firecrawl-band" aria-label="Процесс аудита через Firecrawl">
+          <div class="section-heading compact-heading">
+            <div>
+              <p class="eyebrow">Firecrawl-процесс</p>
+              <h2>Как система собирает аудит без доступов к сайту</h2>
+            </div>
+            <span class="status-pill" id="crawlStatus">
+              <span class="pulse"></span>
+              Ожидает запуска
+            </span>
+          </div>
+          <div class="process-grid" id="processGrid">
+            <article class="process-card active">
+              <strong>01</strong>
+              <h3>Map</h3>
+              <p>Находим страницы сайта: главная, услуги, кейсы, контакты, блог, отзывы.</p>
+            </article>
+            <article class="process-card">
+              <strong>02</strong>
+              <h3>Scrape</h3>
+              <p>Собираем чистый markdown, мета-теги, ссылки, изображения и структуру страниц.</p>
+            </article>
+            <article class="process-card">
+              <strong>03</strong>
+              <h3>Audit</h3>
+              <p>Оцениваем оффер, CTA, контакты, доверие, SEO/GEO-сигналы и заявки.</p>
+            </article>
+            <article class="process-card">
+              <strong>04</strong>
+              <h3>CRM</h3>
+              <p>Превращаем слабые места в задачи, сроки, ответственных и Telegram-уведомления.</p>
+            </article>
+          </div>
+        </section>
+
+        <section class="panel active" id="audit" aria-labelledby="auditTitle">
+          <div class="section-heading">
+            <div>
+              <p class="eyebrow">Интерактивный отчёт</p>
+              <h2 id="auditTitle">Карта потерь бизнеса</h2>
+            </div>
+            <button class="secondary-action" id="expertMode" type="button">Добавить экспертный слой</button>
+          </div>
+
+          <div class="audit-tabs" aria-label="Разделы аудита">
+            <button class="audit-tab active" data-audit-tab="findings" type="button">Выводы</button>
+            <button class="audit-tab" data-audit-tab="pages" type="button">Страницы</button>
+            <button class="audit-tab" data-audit-tab="tasks" type="button">Задачи</button>
+            <button class="audit-tab" data-audit-tab="evidence" type="button">Доказательства</button>
+            <button class="audit-tab" data-audit-tab="plan" type="button">План работ</button>
+          </div>
+
+          <div class="audit-tab-panel active" id="auditTab-findings">
+            <div class="audit-grid" id="auditGrid"></div>
+          </div>
+
+          <div class="audit-tab-panel" id="auditTab-pages">
+            <div class="page-filters" id="pageFilters">
+              <button class="filter-chip active" data-page-filter="all" type="button">Все</button>
+              <button class="filter-chip" data-page-filter="home" type="button">Главная</button>
+              <button class="filter-chip" data-page-filter="services" type="button">Услуги</button>
+              <button class="filter-chip" data-page-filter="contacts" type="button">Контакты</button>
+              <button class="filter-chip" data-page-filter="cases" type="button">Кейсы</button>
+              <button class="filter-chip" data-page-filter="blog" type="button">Блог</button>
+            </div>
+            <div class="pages-grid" id="pagesGrid"></div>
+          </div>
+
+          <div class="audit-tab-panel" id="auditTab-tasks">
+            <div class="tasks-list" id="tasksList"></div>
+          </div>
+
+          <div class="audit-tab-panel" id="auditTab-evidence">
+            <div class="evidence-band" id="evidenceBand" hidden>
+              <div class="section-heading compact-heading">
+                <div>
+                  <p class="eyebrow">Визуальные доказательства</p>
+                  <h2>Что Firecrawl увидел на сайте</h2>
+                </div>
+                <a class="secondary-link" id="auditArchiveLink" href="#" target="_blank" rel="noreferrer">Технический архив</a>
+              </div>
+              <div class="evidence-grid" id="evidenceGrid"></div>
+            </div>
+          </div>
+
+          <div class="audit-tab-panel" id="auditTab-plan">
+            <div class="timeline" id="auditPlan"></div>
+          </div>
+
+          <aside class="task-drawer" id="taskDrawer" aria-hidden="true">
+            <div class="task-drawer-panel">
+              <button class="drawer-close" id="drawerClose" type="button">Закрыть</button>
+              <div id="drawerContent"></div>
+            </div>
+          </aside>
+        </section>
+
+        <section class="panel" id="roadmap" aria-labelledby="roadmapTitle">
+          <div class="section-heading">
+            <div>
+              <p class="eyebrow">Из аудита в работу</p>
+              <h2 id="roadmapTitle">Дорожная карта на 30 дней</h2>
+            </div>
+          </div>
+          <div class="timeline" id="timeline"></div>
+        </section>
+
+        <section class="panel" id="crm" aria-labelledby="crmTitle">
+          <div class="section-heading">
+            <div>
+              <p class="eyebrow">CRM-кабинет</p>
+              <h2 id="crmTitle">Контроль клиента и исполнителя</h2>
+            </div>
+          </div>
+          <div class="crm-layout">
+            <div class="work-board">
+              <div class="board-column">
+                <h3>Ждём клиента</h3>
+                <div id="waitingList"></div>
+              </div>
+              <div class="board-column">
+                <h3>В работе</h3>
+                <div id="activeList"></div>
+              </div>
+              <div class="board-column">
+                <h3>Готово к публикации</h3>
+                <div id="readyList"></div>
+              </div>
+            </div>
+            <div class="client-feed">
+              <h3>События для клиента</h3>
+              <div id="clientFeed"></div>
+            </div>
+          </div>
+        </section>
+
+        <section class="panel" id="analytics" aria-labelledby="analyticsTitle">
+          <div class="section-heading">
+            <div>
+              <p class="eyebrow">Каналы и результат</p>
+              <h2 id="analyticsTitle">Аналитика по каналам</h2>
+            </div>
+          </div>
+          <div class="analytics-grid" id="analyticsGrid"></div>
+        </section>
+      </main>
+    </div>
+
+    <script src="audit-app.js"></script>
+  </body>
+</html>
