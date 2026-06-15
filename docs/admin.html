@@ -249,6 +249,32 @@ textarea { resize: none; height: 80px; }
 
 <div id="toast" class="toast"></div>
 
+<!-- ONBOARDING MODAL -->
+<div class="modal-overlay" id="onboard-modal" onclick="closeModal('onboard-modal')">
+  <div class="modal" onclick="event.stopPropagation()">
+    <div class="modal-title">🚀 Онбординг нового клиента</div>
+    <p style="font-size:13px;color:var(--muted);margin-bottom:14px;line-height:1.5">
+      Вставь ссылку на сайт клиента — AI проанализирует его и автоматически создаст контент-план с 3 постами и картинками.
+    </p>
+    <div class="edit-row"><div class="edit-label">Сайт клиента</div>
+      <input class="edit-input" id="ob-url" placeholder="https://example.ru" type="url">
+    </div>
+    <div class="edit-row"><div class="edit-label">Название</div>
+      <input class="edit-input" id="ob-name" placeholder="Иванов Ремонт (необязательно)">
+    </div>
+    <div class="edit-row"><div class="edit-label">Код бренда</div>
+      <input class="edit-input" id="ob-brand" placeholder="IVANOV (необязательно, макс 10 букв)">
+    </div>
+    <div style="background:rgba(79,142,247,.08);border:1px solid rgba(79,142,247,.2);border-radius:10px;padding:10px;margin-bottom:14px;font-size:12px;color:var(--muted)">
+      ⏱ Займёт 2-3 минуты. Картинки и посты придут в Telegram по мере готовности.
+    </div>
+    <div style="display:flex;gap:8px">
+      <button class="btn btn-ghost" onclick="closeModal('onboard-modal')" style="flex:1">Отмена</button>
+      <button class="btn btn-primary" onclick="doOnboard()" style="flex:2">🚀 Запустить →</button>
+    </div>
+  </div>
+</div>
+
 <!-- GENERATE MODAL -->
 <div class="modal-overlay" id="gen-modal" onclick="closeModal('gen-modal')">
   <div class="modal" onclick="event.stopPropagation()">
@@ -346,7 +372,8 @@ textarea { resize: none; height: 80px; }
   <div class="section-label">Быстрые действия</div>
   <div class="card">
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
-      <button class="btn btn-primary" onclick="openModal('gen-modal')">🎨 Генерация</button>
+      <button class="btn btn-primary" style="grid-column:1/-1;background:linear-gradient(135deg,var(--accent),var(--accent2))" onclick="openModal('onboard-modal')">🚀 Онбординг нового клиента</button>
+      <button class="btn btn-ghost" onclick="openModal('gen-modal')">🎨 Генерация</button>
       <button class="btn btn-ghost" onclick="openModal('pub-modal')">📤 Публикация</button>
       <button class="btn btn-ghost" onclick="sendCmd('CONTENTSTATUS')">📊 Статус</button>
       <button class="btn btn-ghost" onclick="sendCmd('CONTENTSEED')">🔄 Пересеять</button>
@@ -371,6 +398,10 @@ textarea { resize: none; height: 80px; }
 
   <!-- Отчёты (по одному на клиента) -->
   <div id="client-reports"></div>
+
+  <button class="btn btn-primary btn-full" style="background:linear-gradient(135deg,var(--accent),var(--accent2));margin-top:4px" onclick="openModal('onboard-modal')">
+    🚀 + Добавить нового клиента
+  </button>
 
 </div>
 
@@ -819,6 +850,22 @@ async function doGenerate() {
     toast(d.ok ? '🎨 Генерация запущена! Жди в Telegram' : '✗ ' + d.error, d.ok ? 'success' : 'error');
     document.getElementById('gen-prompt').value = '';
   } catch(e) { toast('Ошибка: ' + e.message, 'error'); }
+}
+
+async function doOnboard() {
+  const url = document.getElementById('ob-url').value.trim();
+  const name = document.getElementById('ob-name').value.trim();
+  const brand = document.getElementById('ob-brand').value.trim().toUpperCase().replace(/[^A-Z0-9]/g,'').slice(0,10);
+  if (!url) { toast('Введи URL сайта', 'error'); return; }
+  closeModal('onboard-modal');
+  let cmd = `ONBOARD:${url}`;
+  if (brand) cmd += `:${brand}`;
+  if (name) cmd += `:${name}`;
+  await sendCmd(cmd);
+  toast('🚀 Онбординг запущен! Результат придёт в Telegram', 'success');
+  document.getElementById('ob-url').value = '';
+  document.getElementById('ob-name').value = '';
+  document.getElementById('ob-brand').value = '';
 }
 
 async function doPublish() {
